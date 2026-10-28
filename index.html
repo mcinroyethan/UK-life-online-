@@ -15,6 +15,30 @@
 <div id="mobile"><button data-key="w">▲</button><button data-key="a">◀</button><button data-key="s">▼</button><button data-key="d">▶</button><button id="mobileE">E</button></div></div>
 <div id="start"><div id="card"><div class="eyebrow">A BRITISH OPEN-WORLD PROJECT</div><h1>UK LIFE<br><span>ONLINE</span></h1><p>Welcome to North Quay: a fictional northern UK city with red-brick terraces, a high street, a riverside park, street furniture and a moody overcast sky. Explore on foot, take the wheel and earn your first pay packet.</p><p><b>Prototype 0.2:</b> enhanced materials · varied architecture · atmospheric lighting · car reflections · delivery job · minimap.</p><button id="play">ENTER NORTH QUAY</button><p class="note">Early browser prototype. Online multiplayer and cloud accounts are not enabled yet. This version loads Three.js from a CDN, so an internet connection is required.</p></div></div>
 <div id="locationMenu" role="dialog" aria-modal="true" aria-label="Choose a teleport destination"><h2>Choose a destination</h2><div class="hint">Use D-pad ↑ / ↓ to select a place.</div><div id="locationOptions"></div><div class="footer">✕ TELEPORT · ○ CANCEL</div></div><button id="teleportOpen" type="button">CHOOSE DESTINATION</button>
+<script>
+window.addEventListener('error',function(e){
+ const box=document.querySelector('#start');
+ if(box&&box.style.display!=='none'){
+  const note=box.querySelector('.note');
+  if(note)note.textContent='The game script failed to load: '+(e.message||'unknown error')+'. Refresh the page and try again.';
+ }
+});
+document.addEventListener('DOMContentLoaded',function(){
+ const btn=document.getElementById('play'),screen=document.getElementById('start');
+ if(btn&&screen)btn.addEventListener('click',function(){
+  screen.style.display='none';
+  if(!window.__ukLifeLoopStarted){
+   setTimeout(function(){
+    if(!window.__ukLifeLoopStarted){
+     screen.style.display='flex';
+     const note=screen.querySelector('.note');
+     if(note)note.textContent='The game engine did not start. Please refresh the page; if this repeats, tell me and I will fix the loading error.';
+    }
+   },1200);
+  }
+ });
+});
+</script>
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.185.0/build/three.module.js';
 const canvas=document.querySelector('#game'),renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;
