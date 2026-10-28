@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded',function(){
 </script>
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.185.0/build/three.module.js';
-const canvas=document.querySelector('#game'),renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;
+const canvas=document.querySelector('#game'),renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x9cabb4);scene.fog=new THREE.FogExp2(0x9cabb4,.0039);
 const camera=new THREE.PerspectiveCamera(65,innerWidth/innerHeight,.1,500);
 scene.add(new THREE.HemisphereLight(0xdce9f4,0x4b5548,2.15));const sun=new THREE.DirectionalLight(0xffe8cc,2.6);sun.position.set(-55,90,40);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-95,right:95,top:95,bottom:-95,near:.5,far:220});sun.shadow.bias=-.00015;scene.add(sun);
