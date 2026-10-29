@@ -57,20 +57,24 @@ function showStartError(message){
 function shuffleStartingLocations(){if(typeof window.randomizeStartingLocations==='function'){window.randomizeStartingLocations();return;}const list=window.startingLocations;if(!Array.isArray(list)||list.length<2)return;const selected=list[window.startingLocationIndex||0]?.name;for(let i=list.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const temp=list[i];list[i]=list[j];list[j]=temp;}window.startingLocationIndex=Math.max(0,list.findIndex(p=>p.name===selected));const el=document.getElementById('startPlaces');if(el){el.innerHTML='';list.forEach((place,i)=>{const b=document.createElement('button');b.type='button';b.className=i===window.startingLocationIndex?'selected':'';b.innerHTML=(i===window.startingLocationIndex?'✓ ':'')+place.name+'<small>Random spawn · Free</small>';b.addEventListener('click',()=>{window.startingLocationIndex=i;el.querySelectorAll('button').forEach((button,j)=>{button.classList.toggle('selected',j===i);button.innerHTML=(j===i?'✓ ':'')+list[j].name+'<small>Random spawn · Free</small>';});});el.appendChild(b);});}}
 // The ten starting choices stay stable while the player chooses; a fresh set is picked on page reload.
 (function startScreenController(){
- let lastUp=false,lastDown=false,lastCross=false;
+ let lastUp=false,lastDown=false,lastLeft=false,lastRight=false,lastCross=false;
  function pollStartPad(){
   const pads=navigator.getGamepads?navigator.getGamepads():[];
   const pad=Array.from(pads).find(p=>p&&p.connected);
   if(pad&&document.getElementById('start').style.display!=='none'){
    const pressed=i=>!!pad.buttons[i]?.pressed;
-   const up=pressed(12)||((pad.axes[1]||0)<-.6);
-   const down=pressed(13)||((pad.axes[1]||0)>.6);
+   // Use the actual D-pad buttons so all four directions navigate the location grid.
+   const up=pressed(12),down=pressed(13),left=pressed(14),right=pressed(15);
    const cross=pressed(0);
-   if(up&&!lastUp){window.startingLocationIndex=(Math.max(0,window.startingLocationIndex||0)+((window.startingLocations||[]).length-1))%Math.max(1,(window.startingLocations||[]).length);markStartSelection();}
-   if(down&&!lastDown){window.startingLocationIndex=((window.startingLocationIndex||0)+1)%Math.max(1,(window.startingLocations||[]).length);markStartSelection();}
+   const count=(window.startingLocations||[]).length;
+   const columns=Math.max(1,document.getElementById('startPlaces')?.style.gridTemplateColumns?.split(' ').length||getComputedStyle(document.getElementById('startPlaces')).gridTemplateColumns.split(' ').length||1);
+   if(up&&!lastUp){window.startingLocationIndex=Math.max(0,(window.startingLocationIndex||0)-columns);markStartSelection();}
+   if(down&&!lastDown){window.startingLocationIndex=Math.min(count-1,(window.startingLocationIndex||0)+columns);markStartSelection();}
+   if(left&&!lastLeft){window.startingLocationIndex=Math.max(0,(window.startingLocationIndex||0)-1);markStartSelection();}
+   if(right&&!lastRight){window.startingLocationIndex=Math.min(count-1,(window.startingLocationIndex||0)+1);markStartSelection();}
    if(cross&&!lastCross){window.enterSelectedStartingLocation?.();}
-   lastUp=up;lastDown=down;lastCross=cross;
-  }else{lastUp=false;lastDown=false;lastCross=false;}
+   lastUp=up;lastDown=down;lastLeft=left;lastRight=right;lastCross=cross;
+  }else{lastUp=false;lastDown=false;lastLeft=false;lastRight=false;lastCross=false;}
   requestAnimationFrame(pollStartPad);
  }
  function markStartSelection(){
