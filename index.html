@@ -160,6 +160,43 @@ function building(x,z,w,d,h,style=0,shop=false){
 }
 for(let p=-80;p<=80;p+=40){road(p,0,8,190);road(0,p,190,8)}
 road(0,0,12,190);road(0,0,190,12);road(-60,-90,190,7);road(-60,90,190,7);
+// England expansion — first pass: long-distance A-road and motorway corridors.
+// The existing prototype uses a compact coordinate system; these corridors establish
+// the route network before the world is rescaled and detailed region by region.
+function countryRoad(x1,z1,x2,z2,width=4.8){
+ const dx=x2-x1,dz=z2-z1,len=Math.hypot(dx,dz),angle=Math.atan2(dx,dz);
+ const g=new THREE.Group();g.position.set((x1+x2)/2,.02,(z1+z2)/2);g.rotation.y=angle;scene.add(g);
+ cube(g,width,.075,len,M.road,0,0,0,false);
+ cube(g,.12,.018,len,M.line,-width*.34,.047,0,false);cube(g,.12,.018,len,M.line,width*.34,.047,0,false);
+ for(let p=-len/2+7;p<len/2;p+=12)cube(g,1.8,.018,.12,M.line,0,.049,p,false);
+ return g;
+}
+function motorwaySign(x,z,heading,label,small){
+ const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=heading;scene.add(g);
+ cube(g,.13,2.7,.13,M.metal,-.8,1.35,0,false);cube(g,.13,2.7,.13,M.metal,.8,1.35,0,false);
+ cube(g,2.5,1.25,.12,M.blue,0,3.0,0,false);
+ // White destination bars evoke UK motorway signage from a distance.
+ cube(g,1.75,.07,.035,M.white,0,3.28,.08,false);cube(g,1.25,.055,.035,M.white,0,3.02,.08,false);
+ cube(g,.7,.05,.035,M.white,0,2.78,.08,false);
+}
+const englishMotorways=[
+ [[-26,-10],[-16,-9]], // Liverpool–Manchester M62 corridor
+ [[-16,-9],[-2,-1]], // towards Leeds
+ [[-16,-9],[-8,-24]], // M6/M6 toll direction to Midlands
+ [[-8,-24],[-24,-34]], // Midlands to Bristol
+ [[-8,-24],[-1,-37]], // Oxford / south-east route
+ [[-1,-37],[8,-42]], // towards London
+ [[8,-42],[12,-49]], // London to south coast
+ [[-24,-34],[-28,-43]], // Bristol / South Wales approach
+ [[-2,-1],[-2,6]], // York
+ [[-2,6],[2,20]] // North East
+];
+for(const route of englishMotorways)countryRoad(route[0][0],route[0][1],route[1][0],route[1][1],5.4);
+motorwaySign(-21,-10,Math.PI/2,'M62','MOTORWAY');
+motorwaySign(-12,-17,0,'M6','MOTORWAY');
+motorwaySign(3,-39,Math.PI/2,'M1','MOTORWAY');
+motorwaySign(-19,-31,Math.PI/2,'M5','MOTORWAY');
+
 pavement(0,-8,188,2.4);pavement(0,8,188,2.4);pavement(-8,0,2.4,188);pavement(8,0,2.4,188);
 pavement(-60,-101,190,17);pavement(-60,101,190,17);
 for(let gx=-3;gx<=2;gx++)for(let gz=-2;gz<=2;gz++){const cx=gx*40+20,cz=gz*40+20;if(Math.abs(cx)<9||Math.abs(cz)<9)continue;for(let side=0;side<2;side++){const bx=cx+(side?9:-9),bz=cz+(side?7:-7);for(let i=0;i<3;i++){const xx=bx+(i-1)*5.2,height=6.8+(Math.abs(gx*7+gz*3+i)%4)*1.1;building(xx,bz,4.8,7,height,Math.abs(gx+gz+i)%5,Math.abs(gx+gz+i)%4===0)}}}
