@@ -164,12 +164,39 @@ road(0,0,12,190);road(0,0,190,12);road(-60,-90,190,7);road(-60,90,190,7);
 // The existing prototype uses a compact coordinate system; these corridors establish
 // the route network before the world is rescaled and detailed region by region.
 function countryRoad(x1,z1,x2,z2,width=4.8){
- const dx=x2-x1,dz=z2-z1,len=Math.hypot(dx,dz),angle=Math.atan2(dx,dz);
- const g=new THREE.Group();g.position.set((x1+x2)/2,.02,(z1+z2)/2);g.rotation.y=angle;scene.add(g);
- cube(g,width,.075,len,M.road,0,0,0,false);
- cube(g,.12,.018,len,M.line,-width*.34,.047,0,false);cube(g,.12,.018,len,M.line,width*.34,.047,0,false);
- for(let p=-len/2+7;p<len/2;p+=12)cube(g,1.8,.018,.12,M.line,0,.049,p,false);
- return g;
+ // Proper road ribbon with a gravel verge, asphalt carriageway, edge lines
+ // and broken centre markings. Segmenting the route lets it follow bends.
+ const points=[new THREE.Vector3(x1,0,z1),new THREE.Vector3(x2,0,z2)];
+ const curve=new THREE.LineCurve3(points[0],points[1]);
+ const length=curve.getLength(),steps=Math.max(2,Math.ceil(length/2.2));
+ const group=new THREE.Group();scene.add(group);
+ const makeRibbon=(halfWidth,material,y)=>{
+  const positions=[],indices=[];
+  for(let i=0;i<=steps;i++){
+   const p=curve.getPointAt(i/steps),t=curve.getTangentAt(i/steps);
+   const nx=t.z,nz=-t.x;
+   positions.push(p.x+nx*halfWidth,y,p.z+nz*halfWidth,p.x-nx*halfWidth,y,p.z-nz*halfWidth);
+   if(i<steps){const a=i*2;indices.push(a,a+1,a+2,a+1,a+3,a+2);}
+  }
+  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geo.setIndex(indices);geo.computeVertexNormals();
+  const mesh=new THREE.Mesh(geo,material);mesh.receiveShadow=true;group.add(mesh);
+ };
+ makeRibbon(width*.72,M.asphalt2,.012);
+ makeRibbon(width*.5,M.road,.025);
+ const mark=(offset,material,segmentLength)=>{
+  for(let d=1;d<length-1;d+=segmentLength){
+   const p=curve.getPointAt(d/length),t=curve.getTangentAt(d/length),nx=t.z,nz=-t.x;
+   const bar=cube(group,.105,.018,Math.min(2.8,length-d),material,p.x+nx*offset,.05,p.z+nz*offset,false);
+   bar.rotation.y=Math.atan2(t.x,t.z);
+  }
+ };
+ mark(-width*.43,M.line,Math.max(3.6,length/Math.ceil(length/7)));
+ mark(width*.43,M.line,Math.max(3.6,length/Math.ceil(length/7)));
+ for(let d=0;d<length;d+=9){
+  const p=curve.getPointAt(Math.min(.999,d/length)),t=curve.getTangentAt(Math.min(.999,d/length));
+  const dash=cube(group,.12,.02,3.2,M.line,p.x,.055,p.z,false);dash.rotation.y=Math.atan2(t.x,t.z);
+ }
+ return group;
 }
 function motorwaySign(x,z,heading,label,small){
  const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=heading;scene.add(g);
