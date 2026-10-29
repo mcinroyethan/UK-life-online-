@@ -132,157 +132,47 @@ scene.add(new THREE.HemisphereLight(0xdce9f4,0x4b5548,2.15));const sun=new THREE
 const mat=(c,r=.82,m=0)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m});
 const M={grass:mat(0x53694c),road:mat(0x292f33,.96),asphalt2:mat(0x343a3e),pave:mat(0xaaa99f),curb:mat(0x777b78),line:mat(0xe3ddc5),brick:mat(0x884d3f),brick2:mat(0xa5644f),brick3:mat(0x70453e),cream:mat(0xc5b99e),render:mat(0x9a9a8e),roof:mat(0x414448),glass:mat(0x385361,.25,.25),dark:mat(0x20272b),white:mat(0xe2e0d7),green:mat(0x395e45),blue:mat(0x277fb0),yellow:mat(0xd8b24c),metal:mat(0x68747a,.36,.65),leaf:mat(0x3e6242)};
 function cube(parent,w,h,d,material,x,y,z,shadow=true){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);o.position.set(x,y,z);o.castShadow=shadow;o.receiveShadow=true;parent.add(o);return o}
-const oceanMat=mat(0x65b8ca,.72,.08),landMat=mat(0x779d72,.98),coastMat=mat(0x9abf89,.98);
-const ground=new THREE.Mesh(new THREE.PlaneGeometry(420,420),oceanMat);ground.rotation.x=-Math.PI/2;ground.position.y=-.18;ground.receiveShadow=true;scene.add(ground);
-function landmass(points,material,y=-.12){const shape=new THREE.Shape();shape.moveTo(points[0][0],points[0][1]);for(let i=1;i<points.length;i++)shape.lineTo(points[i][0],points[i][1]);shape.closePath();const mesh=new THREE.Mesh(new THREE.ShapeGeometry(shape),material);mesh.rotation.x=Math.PI/2;mesh.position.y=y;mesh.receiveShadow=true;scene.add(mesh);return mesh}
-const britain=[[-24,-91],[-15,-83],[-20,-75],[-12,-68],[-8,-58],[-13,-48],[-5,-40],[2,-30],[8,-20],[13,-10],[18,0],[25,9],[24,20],[18,31],[23,42],[16,53],[12,64],[5,73],[0,84],[-8,91],[-15,84],[-18,73],[-23,64],[-19,54],[-26,44],[-29,33],[-25,23],[-33,14],[-35,4],[-30,-5],[-36,-15],[-33,-27],[-28,-38],[-34,-48],[-29,-59],[-31,-71],[-24,-79],[-27,-86]];
-const ireland=[[-63,-54],[-53,-49],[-47,-40],[-43,-30],[-44,-19],[-39,-8],[-43,3],[-39,14],[-43,25],[-49,31],[-54,23],[-61,17],[-68,8],[-70,-2],[-66,-13],[-71,-24],[-68,-37],[-65,-47]];
-landmass(britain,landMat);landmass(ireland,landMat);
+// Preston-only scene: Harris Library is the single central landmark.
+const groundMat=mat(0x78856b,.98),streetMat=mat(0x34383a,.96),stone=mat(0xb9aa91,.9),stoneLight=mat(0xd0c2a8,.88),roofMat=mat(0x34383c,.9),windowMat=mat(0x263e49,.22,.18),trim=mat(0xddd2bd,.75),grassMat=mat(0x647a55,.98);
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(520,520),groundMat);ground.rotation.x=-Math.PI/2;ground.position.y=-.2;ground.receiveShadow=true;scene.add(ground);
 const colliders=[];
-function road(x,z,w,d){cube(scene,w,.08,d,M.road,x,.005,z,false);if(w>d){for(let a=x-w/2+2;a<x+w/2;a+=8)cube(scene,3,.014,.11,M.line,a,.052,z,false)}else{for(let a=z-d/2+2;a<z+d/2;a+=8)cube(scene,.11,.014,3,M.line,x,.052,a,false)}}
-function pavement(x,z,w,d){cube(scene,w,.16,d,M.pave,x,.04,z,false);const n=Math.floor((w+d)/3);if(w>d){for(let a=x-w/2+1;a<x+w/2;a+=3)cube(scene,.035,.012,d-.2,M.curb,a,.13,z,false)}}
-function building(x,z,w,d,h,style=0,shop=false){
- const walls=[M.brick,M.brick2,M.cream,M.render,M.brick3],wall=walls[style%walls.length];const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
- cube(g,w,h,d,wall,0,h/2,0);cube(g,w+.16,.17,d+.16,M.roof,0,h+.05,0);
- // brick courses and lintels give the facade more scale and detail
- if(style===0||style===1||style===4){for(let yy=.55;yy<h-1;yy+=.43)cube(g,w-.12,.025,.025,mat(style===1?0x75473c:0x693d35),0,yy,-d/2-.02,false)}
- const floors=Math.max(1,Math.floor((h-1.4)/2.35));
- for(let f=0;f<floors;f++)for(let wx=-w/2+1;wx<w/2-.4;wx+=1.55){
-  cube(g,.76,1.05,.075,M.dark,wx,1.38+f*2.35,-d/2-.045,false);cube(g,.61,.88,.04,M.glass,wx,1.4+f*2.35,-d/2-.075,false);
-  cube(g,.82,.09,.1,M.white,wx,1.38+f*2.35-.57,-d/2-.09,false);cube(g,.84,.08,.1,M.white,wx,1.38+f*2.35+.56,-d/2-.09,false);
-  cube(g,.06,.98,.055,M.white,wx,1.4+f*2.35,-d/2-.1,false);
- }
- if(shop){cube(g,w*.96,.85,.14,M.green,0,1.1,-d/2-.09,false);cube(g,w*.92,.12,.16,M.yellow,0,1.63,-d/2-.12,false);cube(g,w*.58,.18,.18,M.white,0,2.12,-d/2-.12,false);cube(g,w*.25,.68,.1,M.glass,-w*.29,1.12,-d/2-.18,false)}
- else{cube(g,.78,1.75,.09,M.dark,-w*.22,.9,-d/2-.07,false);cube(g,.12, .12,.06,M.yellow,-w*.08,1,-d/2-.13,false)}
- // downpipes and gutters
- cube(g,.09,.12,d+.22,M.dark,-w/2+.16,h+.02,0,false);cube(g,.09,1.4,.09,M.metal,w/2-.18,.75,-d/2-.1,false);
- colliders.push({x,z,w:w+.5,d:d+.5});
+function road(x,z,w,d){cube(scene,w,.09,d,streetMat,x,.005,z,false)}
+function pavement(x,z,w,d){cube(scene,w,.18,d,stoneLight,x,.04,z,false)}
+// A simple, open Market Square street layout around the library. No UK overview map,
+// no other town centres, and no overlapping regional road layers.
+road(0,27,150,13);road(0,-27,150,13);road(-73,0,13,68);road(73,0,13,68);
+pavement(0,18,150,4);pavement(0,-18,150,4);pavement(-64,0,4,42);pavement(64,0,4,42);
+const square=new THREE.Mesh(new THREE.PlaneGeometry(105,42),mat(0xaaa69a,.96));square.rotation.x=-Math.PI/2;square.position.set(0,.015,0);square.receiveShadow=true;scene.add(square);
+// Harris Library-inspired civic building: broad stone frontage, central entrance,
+// pilasters, tall recessed windows, cornice and a raised roofline.
+const library=new THREE.Group();library.position.set(0,0,-3);scene.add(library);
+function part(w,h,d,m,x,y,z){return cube(library,w,h,d,m,x,y,z)}
+part(34,12,13,stone,0,6,0);part(36,.65,14,trim,0,12.15,0);part(35,.8,14,roofMat,0,12.8,0);
+part(14,4,13,stoneLight,0,14.8,0);part(15,.55,14,trim,0,16.9,0);
+part(8,2,1,stoneLight,0,18,0); // central pediment base
+// Tall central entrance and symmetrical window bays
+part(5.2,7,.35,roofMat,0,4.2,-6.72);
+part(3.8,5.8,.18,windowMat,0,4.1,-6.94);
+part(1.3,6.3,.35,trim,-2.65,4.1,-7.02);part(1.3,6.3,.35,trim,2.65,4.1,-7.02);
+for(const x of [-13,-8.5,-4.3,4.3,8.5,13]){
+ part(2.35,7,.28,roofMat,x,6.2,-6.72);part(1.75,6.3,.12,windowMat,x,6.2,-6.91);
+ part(.18,6.6,.24,trim,x-1.05,6.2,-7.03);part(.18,6.6,.24,trim,x+1.05,6.2,-7.03);
+ part(2.65,.22,.3,trim,x,2.85,-7.05);part(2.65,.22,.3,trim,x,9.55,-7.05);
 }
-for(let p=-80;p<=80;p+=40){road(p,0,8,190);road(0,p,190,8)}
-road(0,0,12,190);road(0,0,190,12);road(-60,-90,190,7);road(-60,90,190,7);
-// England expansion — first pass: long-distance A-road and motorway corridors.
-// The existing prototype uses a compact coordinate system; these corridors establish
-// the route network before the world is rescaled and detailed region by region.
-function countryRoad(x1,z1,x2,z2,width=4.8){
- // Proper road ribbon with a gravel verge, asphalt carriageway, edge lines
- // and broken centre markings. Segmenting the route lets it follow bends.
- const points=[new THREE.Vector3(x1,0,z1),new THREE.Vector3(x2,0,z2)];
- const curve=new THREE.LineCurve3(points[0],points[1]);
- const length=curve.getLength(),steps=Math.max(2,Math.ceil(length/2.2));
- const group=new THREE.Group();scene.add(group);
- const makeRibbon=(halfWidth,material,y)=>{
-  const positions=[],indices=[];
-  for(let i=0;i<=steps;i++){
-   const p=curve.getPointAt(i/steps),t=curve.getTangentAt(i/steps);
-   const nx=t.z,nz=-t.x;
-   positions.push(p.x+nx*halfWidth,y,p.z+nz*halfWidth,p.x-nx*halfWidth,y,p.z-nz*halfWidth);
-   if(i<steps){const a=i*2;indices.push(a,a+1,a+2,a+1,a+3,a+2);}
-  }
-  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geo.setIndex(indices);geo.computeVertexNormals();
-  const mesh=new THREE.Mesh(geo,material);mesh.receiveShadow=true;group.add(mesh);
- };
- makeRibbon(width*.72,M.asphalt2,.012);
- makeRibbon(width*.5,M.road,.025);
- const mark=(offset,material,segmentLength)=>{
-  for(let d=1;d<length-1;d+=segmentLength){
-   const p=curve.getPointAt(d/length),t=curve.getTangentAt(d/length),nx=t.z,nz=-t.x;
-   const bar=cube(group,.105,.018,Math.min(2.8,length-d),material,p.x+nx*offset,.05,p.z+nz*offset,false);
-   bar.rotation.y=Math.atan2(t.x,t.z);
-  }
- };
- mark(-width*.43,M.line,Math.max(3.6,length/Math.ceil(length/7)));
- mark(width*.43,M.line,Math.max(3.6,length/Math.ceil(length/7)));
- for(let d=0;d<length;d+=9){
-  const p=curve.getPointAt(Math.min(.999,d/length)),t=curve.getTangentAt(Math.min(.999,d/length));
-  const dash=cube(group,.12,.02,3.2,M.line,p.x,.055,p.z,false);dash.rotation.y=Math.atan2(t.x,t.z);
- }
- return group;
+for(const x of [-16,-11,-6,6,11,16]){part(.42,10,.55,trim,x,6,-7.15)}
+// Entrance steps, stone plinth and a modest paved forecourt
+part(30,.65,14,stoneLight,0,.55,-.2);part(10,.28,5,trim,0,.22,-10);
+for(let i=0;i<5;i++)part(10-i*1.5,.18,.7,trim,0,.12+i*.18,-9.3-i*.7);
+// Side wings and roof details give the landmark a recognisable civic silhouette
+for(const x of [-20,20]){part(7,8,12,stone,x,4,0);part(7.4,.45,12.4,trim,x,8.2,0);part(7.2,.45,12.2,roofMat,x,8.65,0)}
+// Square paving joints, benches, planters and mature trees
+for(let x=-48;x<=48;x+=8)for(let z=-14;z<=14;z+=7){const seam=cube(scene,.035,.012,5.8,mat(0x88877e),x,.04,z,false)}
+for(const x of [-39,39])for(const z of [-10,10]){
+ const planter=cube(scene,3,.55,3,mat(0x77796b),x,.28,z,false);
+ const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.22,.32,3.5,9),mat(0x594936));trunk.position.set(x,2,z);trunk.castShadow=true;scene.add(trunk);
+ const crown=new THREE.Mesh(new THREE.SphereGeometry(2.5,14,12),mat(0x426347));crown.position.set(x,4.6,z);crown.castShadow=true;scene.add(crown);
 }
-function motorwaySign(x,z,heading,label,small){
- const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=heading;scene.add(g);
- cube(g,.13,2.7,.13,M.metal,-.8,1.35,0,false);cube(g,.13,2.7,.13,M.metal,.8,1.35,0,false);
- cube(g,2.5,1.25,.12,M.blue,0,3.0,0,false);
- // White destination bars evoke UK motorway signage from a distance.
- cube(g,1.75,.07,.035,M.white,0,3.28,.08,false);cube(g,1.25,.055,.035,M.white,0,3.02,.08,false);
- cube(g,.7,.05,.035,M.white,0,2.78,.08,false);
-}
-const englishMotorways=[
- [[-26,-10],[-16,-9]], // Liverpool–Manchester M62 corridor
- [[-16,-9],[-2,-1]], // towards Leeds
- [[-16,-9],[-8,-24]], // M6/M6 toll direction to Midlands
- [[-8,-24],[-24,-34]], // Midlands to Bristol
- [[-8,-24],[-1,-37]], // Oxford / south-east route
- [[-1,-37],[8,-42]], // towards London
- [[8,-42],[12,-49]], // London to south coast
- [[-24,-34],[-28,-43]], // Bristol / South Wales approach
- [[-2,-1],[-2,6]], // York
- [[-2,6],[2,20]] // North East
-];
-for(const route of englishMotorways)countryRoad(route[0][0],route[0][1],route[1][0],route[1][1],5.4);
-motorwaySign(-21,-10,Math.PI/2,'M62','MOTORWAY');
-motorwaySign(-12,-17,0,'M6','MOTORWAY');
-motorwaySign(3,-39,Math.PI/2,'M1','MOTORWAY');
-motorwaySign(-19,-31,Math.PI/2,'M5','MOTORWAY');
-// England road-map pass 2: connect more towns with A-road links and rural approaches.
-const englandARoads=[
- [[-26,-10],[-24,-18]], [[-24,-18],[-28,-26]], [[-16,-9],[-17,-2]],
- [[-17,-2],[-18,3]], [[-16,-9],[-4,-5]], [[-4,-5],[-2,-1]], [[-2,-1],[-2,6]],
- [[-2,6],[2,20]], [[-8,-24],[-5,-25]], [[-5,-25],[-1,-37]], [[-24,-34],[-20,-36]],
- [[-20,-36],[-15,-48]], [[-1,-37],[1,-48]], [[1,-48],[4,-48]], [[8,-42],[8,-29]],
- [[8,-29],[20,-26]], [[8,-42],[18,-34]], [[-28,-43],[-34,-39]], [[-20,-61],[-15,-48]],
- [[-8,-24],[-6,-20]], [[-6,-20],[-8,-15]], [[-8,-15],[-16,-9]]
-];
-for(const route of englandARoads)countryRoad(route[0][0],route[0][1],route[1][0],route[1][1],3.1);
-function aRoadSign(x,z){
- const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
- cube(g,.09,1.65,.09,M.metal,0,.82,0,false);
- cube(g,1.25,.62,.12,M.white,0,1.65,0,false);
- cube(g,1.12,.48,.035,M.green,0,1.65,.08,false);
- cube(g,.7,.045,.025,M.white,0,1.76,.105,false);
- cube(g,.48,.04,.025,M.white,0,1.61,.105,false);
-}
-for(const s of [[-25,-15],[-16,-4],[-3,-3],[-7,-22],[-19,-38],[5,-45],[13,-33],[-3,3]])aRoadSign(s[0],s[1]);
-
-
-pavement(0,-8,188,2.4);pavement(0,8,188,2.4);pavement(-8,0,2.4,188);pavement(8,0,2.4,188);
-pavement(-60,-101,190,17);pavement(-60,101,190,17);
-for(let gx=-3;gx<=2;gx++)for(let gz=-2;gz<=2;gz++){const cx=gx*40+20,cz=gz*40+20;if(Math.abs(cx)<9||Math.abs(cz)<9)continue;for(let side=0;side<2;side++){const bx=cx+(side?9:-9),bz=cz+(side?7:-7);for(let i=0;i<3;i++){const xx=bx+(i-1)*5.2,height=6.8+(Math.abs(gx*7+gz*3+i)%4)*1.1;building(xx,bz,4.8,7,height,Math.abs(gx+gz+i)%5,Math.abs(gx+gz+i)%4===0)}}}
-for(let i=0;i<7;i++)building(-23+i*7,-24,5.7,7,15+(i%3)*4.5,i%5,false);
-// roof equipment on city-centre buildings
-for(let i=0;i<5;i++){cube(scene,1.2,1.1,1.2,M.metal,-20+i*7,18,-24,false)}
-// park, hedges, benches, trees
-cube(scene,31,.06,30,M.green,56,.02,52,false);
-for(let i=0;i<18;i++){const x=40+(i%6)*5.3,z=39+Math.floor(i/6)*8.5;cube(scene,.35,2.1,.35,mat(0x594735),x,1,z,false);const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(1.7+(i%3)*.22,2),M.leaf);crown.position.set(x,3.2,z);crown.castShadow=true;scene.add(crown)}
-for(let i=0;i<4;i++){cube(scene,2.1,.15,.55,M.roof,48+i*6,.65,63,false);cube(scene,2.1,.13,.14,M.roof,48+i*6,1,62.8,false)}
-const water=new THREE.Mesh(new THREE.PlaneGeometry(190,24),new THREE.MeshStandardMaterial({color:0x397987,roughness:.22,metalness:.18}));water.rotation.x=-Math.PI/2;water.position.set(-60,-.04,116);scene.add(water);
-// street lamps with simple lamp heads
-for(let x=-80;x<=80;x+=20)for(const z of [-14,14]){cube(scene,.12,5,.12,M.dark,x,2.5,z,false);cube(scene,.62,.12,.35,M.yellow,x,4.95,z,false);cube(scene,.75,.06,.45,mat(0xf1e1ae,.25),x,4.85,z,false)}
-// road signs and bus shelters
-for(const x of [-30,30]){cube(scene,.12,2.1,.12,M.metal,x,1,-10,false);cube(scene,.9,.8,.1,M.blue,x,1.75,-10,false);cube(scene,.62,.46,.12,M.white,x,1.76,-9.92,false)}
-const shelter=new THREE.Group();shelter.position.set(12,0,-13);scene.add(shelter);cube(shelter,3,.12,1.3,M.metal,0,2.2,0,false);for(const x of [-1.4,1.4])cube(shelter,.1,2.2,.1,M.metal,x,1.1,0,false);cube(shelter,2.7,1.4,.05,M.glass,0,1.2,-.55,false);cube(shelter,2.3,.14,.5,M.metal,0,.55,.1,false);
-// Red UK telephone box beside the central pavement. The front faces -Z and stays open
-// so the player and the close recovery camera are visible inside.
-const telephoneBox=new THREE.Group();telephoneBox.position.set(10,0,12);scene.add(telephoneBox);
-const phoneRed=mat(0xb51f2a,.5),phoneTrim=mat(0xe2c9a7,.6),phoneGlass=mat(0x8fb8c0,.3,.08);
-cube(telephoneBox,2.7,.16,3.8,phoneRed,0,.08,0);
-cube(telephoneBox,2.7,.18,3.8,phoneRed,0,3.05,0);
-cube(telephoneBox,2.7,.22,3.8,phoneRed,0,3.24,0);
-for(const x of [-1.25,1.25]){
- cube(telephoneBox,.18,3,3.8,phoneRed,x,1.62,0);
- cube(telephoneBox,.035,2.55,3.65,phoneTrim,x*1.01,1.65,0,false);
- cube(telephoneBox,.08,2.45,.06,phoneTrim,x*.91,1.68,-1.78,false);
-}
-cube(telephoneBox,2.45,3,.16,phoneRed,0,1.62,1.82);
-cube(telephoneBox,2.28,2.45,.05,phoneGlass,0,1.72,1.91,false);
-for(let y=.55;y<2.8;y+=.42)for(let x=-1.02;x<=1.02;x+=.34){
- cube(telephoneBox,.27,.29,.035,phoneTrim,x,y,1.95,false);
-}
-cube(telephoneBox,1.35,.32,.12,phoneRed,0,2.77,-1.86);
-cube(telephoneBox,1.12,.19,.04,phoneTrim,0,2.78,-1.93,false);
-cube(telephoneBox,.48,.06,.035,phoneTrim,0,2.78,-1.96,false);
-const recoveryPad=new THREE.Mesh(new THREE.CylinderGeometry(.8,.8,.08,24),new THREE.MeshStandardMaterial({color:0x6ce8a5,emissive:0x164d31,emissiveIntensity:.5}));
-recoveryPad.position.set(0,.2,.15);telephoneBox.add(recoveryPad);
-// parked cars scattered along curb
+for(const x of [-52,-26,26,52])for(const z of [-17,17]){cube(scene,.12,4.5,.12,M.dark,x,2.25,z,false);cube(scene,.65,.16,.45,M.yellow,x,4.45,z,false)}
 const allCars=[];function makeCar(color,x,z,rot=0,scale=1){const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=rot;g.scale.setScalar(scale);g.userData.speed=0;allCars.push(g);scene.add(g);cube(g,1.85,.62,3.7,mat(color,.38,.28),0,.72,0);cube(g,1.42,.67,1.65,M.glass,0,1.3,-.12);for(const xx of [-.95,.95])for(const zz of [-1.18,1.18]){const wh=new THREE.Mesh(new THREE.CylinderGeometry(.31,.31,.19,16),M.dark);wh.rotation.z=Math.PI/2;wh.position.set(xx,.37,zz);wh.castShadow=true;g.add(wh)}for(const xx of [-.58,.58]){cube(g,.28,.15,.06,M.white,xx,.78,1.88,false);cube(g,.28,.15,.06,mat(0xb13b2e),xx,.78,-1.88,false)}return g}
 for(let i=0;i<9;i++){makeCar([0x7d3028,0x343c42,0xc6c7c2,0x273f50,0x6c715e][i%5],-27+i*7,11+(i%2)*2,(i%2?Math.PI/2:0),.88)}
 for(let i=0;i<6;i++)makeCar([0x33383b,0x7c8a91,0x9b3429][i%3],-27+i*10,-11,Math.PI/2,.84);
@@ -336,8 +226,8 @@ const knownTownCoords={
  Wrexham:[-25,-12],Bangor:[-31,-4],Newry:[-51,6],Lisburn:[-54,11],Armagh:[-51,15],
  Londonderry:[-62,22],Truro:[-20,-56],Penzance:[-27,-59],Carlisle:[-23,18],Kendal:[-18,12]
 };
-const ukTownCatalogue=ukTownNames.map((name,i)=>{const known=knownTownCoords[name];return {name,x:known?known[0]:-24+(i%7)*7,z:known?known[1]:-52+Math.floor(i/7)*5.2,radius:3.5}});
-const destinations=[...ukTownCatalogue,{name:'North Quay',x:0,z:0,radius:7}];
+const ukTownCatalogue=[{name:'Preston',x:0,z:0,radius:3.5}];
+const destinations=[{name:'Preston',x:0,z:0,radius:3.5}];
 function shuffledCopy(list){const a=[...list];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 let startingLocations=shuffledCopy(ukTownCatalogue).slice(0,10);
 window.startingLocations=startingLocations;function randomSpot(d){const a=Math.random()*Math.PI*2,r=Math.sqrt(Math.random())*d.radius;return{x:d.x+Math.cos(a)*r,z:d.z+Math.sin(a)*r}}function renderStartPlaces(){const el=document.querySelector('#startPlaces');if(!el)return;el.innerHTML='';startingLocations.forEach((d,i)=>{const b=document.createElement('button');b.type='button';b.className=i===startingLocationIndex?'selected':'';b.innerHTML=(i===startingLocationIndex?'✓ ':'')+d.name+'<small>Random spawn · Free</small>';b.addEventListener('click',()=>{startingLocationIndex=i;window.startingLocationIndex=i;renderStartPlaces()});el.appendChild(b)})}startingLocationIndex=window.startingLocationIndex||0;renderStartPlaces();window.randomizeStartingLocations=function(){startingLocations=shuffledCopy(ukTownCatalogue).slice(0,10);window.startingLocations=startingLocations;startingLocationIndex=0;window.startingLocationIndex=0;renderStartPlaces();};function renderDestinations(){const el=document.querySelector('#locationOptions');el.innerHTML='';destinations.forEach((d,i)=>{const b=document.createElement('button');b.textContent=(i===locationIndex?'▶ ':'')+d.name+' — £500';b.className=i===locationIndex?'selected':'';b.addEventListener('click',()=>{locationIndex=i;renderDestinations();teleportToSelected()});el.appendChild(b)})}function openLocationMenu(){locationMenuOpen=true;document.querySelector('#locationMenu .hint').textContent='Choose an area. Teleport costs £500 and picks a random spot.';document.querySelector('#locationMenu').style.display='block';renderDestinations()}function closeLocationMenu(){locationMenuOpen=false;document.querySelector('#locationMenu').style.display='none'}function teleportToSelected(){const d=destinations[locationIndex];if(money<500){closeLocationMenu();toast('You need £500 to teleport. Earn money from a delivery job.');return}money-=500;document.querySelector('#money').textContent='£'+money;const p=randomSpot(d);driving=false;player.visible=true;player.position.set(p.x,.35,p.z);cameraYawOffset=0;cameraPitchOffset=0;camera.position.set(p.x,4.2,p.z-8);cameraAim.position.copy(camera.position);cameraAim.lookAt(p.x,1.5,p.z);camera.quaternion.copy(cameraAim.quaternion);closeLocationMenu();toast('Teleported to a random spot in '+d.name+'. −£500')}document.querySelector('#teleportOpen').addEventListener('click',openLocationMenu);
