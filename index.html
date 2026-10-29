@@ -178,7 +178,20 @@ const ukTownNames=[
 'Shrewsbury','Lichfield','Tamworth','Stratford-upon-Avon','Nuneaton','Kettering','Wellingborough','Grantham','Newark-on-Trent','Worksop',
 'Crewe','Macclesfield','Buxton','Glossop','Dewsbury','Keighley','Bridlington','Beverley','Hexham','Berwick-upon-Tweed'
 ];
-const ukTownCatalogue=ukTownNames.map((name,i)=>({name,x:-60+(i%12)*10,z:-55+Math.floor(i/12)*9,radius:3.5}));
+// Keep generated town spawn points inside the existing playable land/city area.
+const knownTownCoords={
+ London:[8,-42],Manchester:[-16,-9],Birmingham:[-8,-24],Glasgow:[-23,39],Cardiff:[-28,-43],
+ Belfast:[-55,12],Liverpool:[-26,-10],Edinburgh:[-8,43],Bristol:[-24,-34],Newcastle:[2,20],
+ Leeds:[-2,-1],Sheffield:[-4,-5],Nottingham:[-8,-15],Leicester:[-6,-20],Coventry:[-5,-25],
+ Plymouth:[-20,-61],Southampton:[1,-48],Portsmouth:[4,-48],Brighton:[12,-49],Oxford:[-1,-37],
+ Cambridge:[8,-29],York:[-2,6],Durham:[-2,14],Sunderland:[1,16],Preston:[-17,-2],
+ Lancaster:[-18,3],Chester:[-24,-18],Warrington:[-20,-12],Norwich:[20,-26],Ipswich:[18,-34],
+ Exeter:[-15,-48],Bath:[-20,-36],Swansea:[-34,-39],Aberdeen:[-12,64],Inverness:[-20,67],
+ Dundee:[-13,53],Perth:[-16,48],Stirling:[-21,47],Dumfries:[-30,23],Newport:[-26,-40],
+ Wrexham:[-25,-12],Bangor:[-31,-4],Newry:[-51,6],Lisburn:[-54,11],Armagh:[-51,15],
+ Londonderry:[-62,22],Truro:[-20,-56],Penzance:[-27,-59],Carlisle:[-23,18],Kendal:[-18,12]
+};
+const ukTownCatalogue=ukTownNames.map((name,i)=>{const known=knownTownCoords[name];return {name,x:known?known[0]:-24+(i%7)*7,z:known?known[1]:-52+Math.floor(i/7)*5.2,radius:3.5}});
 const destinations=[...ukTownCatalogue,{name:'North Quay',x:0,z:0,radius:7}];
 function shuffledCopy(list){const a=[...list];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 let startingLocations=shuffledCopy(ukTownCatalogue).slice(0,10);
