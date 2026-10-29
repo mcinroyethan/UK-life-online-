@@ -143,28 +143,94 @@ function pavement(x,z,w,d){cube(scene,w,.18,d,stoneLight,x,.04,z,false)}
 road(0,27,150,13);road(0,-27,150,13);road(-73,0,13,68);road(73,0,13,68);
 pavement(0,18,150,4);pavement(0,-18,150,4);pavement(-64,0,4,42);pavement(64,0,4,42);
 const square=new THREE.Mesh(new THREE.PlaneGeometry(105,42),mat(0xaaa69a,.96));square.rotation.x=-Math.PI/2;square.position.set(0,.015,0);square.receiveShadow=true;scene.add(square);
-// Harris Library-inspired civic building: broad stone frontage, central entrance,
-// pilasters, tall recessed windows, cornice and a raised roofline.
+// Harris Library: modelled around its real Greek Revival composition:
+// sandstone ashlar block, giant Ionic portico, inscription frieze and sculpted pediment.
+// The reference building is Grade I listed; this is a detailed game-scale reconstruction,
+// not a survey-accurate scan.
 const library=new THREE.Group();library.position.set(0,0,-3);scene.add(library);
 function part(w,h,d,m,x,y,z){return cube(library,w,h,d,m,x,y,z)}
-part(34,12,13,stone,0,6,0);part(36,.65,14,trim,0,12.15,0);part(35,.8,14,roofMat,0,12.8,0);
-part(14,4,13,stoneLight,0,14.8,0);part(15,.55,14,trim,0,16.9,0);
-part(8,2,1,stoneLight,0,18,0); // central pediment base
-// Tall central entrance and symmetrical window bays
-part(5.2,7,.35,roofMat,0,4.2,-6.72);
-part(3.8,5.8,.18,windowMat,0,4.1,-6.94);
-part(1.3,6.3,.35,trim,-2.65,4.1,-7.02);part(1.3,6.3,.35,trim,2.65,4.1,-7.02);
-for(const x of [-13,-8.5,-4.3,4.3,8.5,13]){
- part(2.35,7,.28,roofMat,x,6.2,-6.72);part(1.75,6.3,.12,windowMat,x,6.2,-6.91);
- part(.18,6.6,.24,trim,x-1.05,6.2,-7.03);part(.18,6.6,.24,trim,x+1.05,6.2,-7.03);
- part(2.65,.22,.3,trim,x,2.85,-7.05);part(2.65,.22,.3,trim,x,9.55,-7.05);
+// Main rectangular mass, ground-floor plinth and restrained parapet
+part(34,12,13,stone,0,6,0);
+part(35.2,.55,13.5,stoneLight,0,.45,0);
+part(35.4,.38,13.7,trim,0,12.12,0);
+part(35,.72,13.3,stoneLight,0,12.62,0);
+part(34.8,.28,13.1,trim,0,13.08,0);
+// Raised central portico mass and roofline
+part(16,3.6,12.7,stoneLight,0,14.85,0);
+part(17,.35,13,trim,0,16.78,0);
+part(16.8,.45,12.8,stone,0,17.15,0);
+// Deep portico shadow behind the columns
+part(14.7,6.5,.22,roofMat,0,8.8,-6.61);
+part(13.8,5.6,.12,windowMat,0,8.7,-6.76);
+// Giant round columns with bases, fluted shafts and Ionic-style capitals
+for(const x of [-6.1,-3.65,-1.2,1.2,3.65,6.1]){
+ const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.39,.48,7.2,20),stoneLight);
+ shaft.position.set(x,9.2,-7.25);shaft.castShadow=true;shaft.receiveShadow=true;library.add(shaft);
+ for(const [y,r,h] of [[5.55,.57,.24],[5.76,.52,.18],[12.78,.56,.22],[12.98,.68,.18],[13.15,.55,.16]]){
+  const ring=new THREE.Mesh(new THREE.CylinderGeometry(r,r,h,20),trim);ring.position.set(x,y,-7.25);ring.castShadow=true;library.add(ring);
+ }
+ // Subtle shaft fluting, fine narrow stone ribs rather than square posts
+ for(let a=0;a<12;a++){
+  const ang=a*Math.PI/6;
+  const rib=cube(library,.035,6.5,.035,trim,x+Math.cos(ang)*.405,9.2,-7.25+Math.sin(ang)*.405,false);
+ }
 }
-for(const x of [-16,-11,-6,6,11,16]){part(.42,10,.55,trim,x,6,-7.15)}
-// Entrance steps, stone plinth and a modest paved forecourt
-part(30,.65,14,stoneLight,0,.55,-.2);part(10,.28,5,trim,0,.22,-10);
+// Frieze above the Ionic order and its inscription band
+part(17,.72,.8,stoneLight,0,13.55,-7.12);
+part(17.2,.12,.86,trim,0,13.94,-7.12);
+part(17,.18,.82,stone,0,14.05,-7.12);
+// Triangular pediment face facing the Market Square
+const pedimentShape=new THREE.Shape();pedimentShape.moveTo(-8.3,0);pedimentShape.lineTo(8.3,0);pedimentShape.lineTo(0,3.2);pedimentShape.closePath();
+const pediment=new THREE.Mesh(new THREE.ShapeGeometry(pedimentShape),stoneLight);
+pediment.position.set(0,14.15,-7.22);pediment.castShadow=true;pediment.receiveShadow=true;library.add(pediment);
+const pedimentBorder=new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints([
+ new THREE.Vector3(-8.3,14.15,-7.18),new THREE.Vector3(8.3,14.15,-7.18),new THREE.Vector3(0,17.35,-7.18)
+]),new THREE.LineBasicMaterial({color:0xe1d5bd}));
+library.add(pedimentBorder);
+// Small sculptural silhouettes on the pediment suggest the School of Athens group
+for(let i=0;i<9;i++){
+ const sx=-4.8+i*1.2, sy=14.45+Math.max(0,1-Math.abs(sx)/8)*.9;
+ const figure=new THREE.Mesh(new THREE.SphereGeometry(.24,8,7),stone);
+ figure.position.set(sx,sy,-7.08);figure.scale.set(1,1.45,.7);figure.castShadow=true;library.add(figure);
+}
+for(const x of [-7.6,7.6]){
+ const finial=new THREE.Mesh(new THREE.SphereGeometry(.35,10,8),stoneLight);finial.position.set(x,14.38,-7.15);library.add(finial);
+}
+// Tall, narrow sash windows with stone surrounds, lintels and sills across the main facade
+for(const x of [-14,-10,-6,6,10,14]){
+ for(const y of [4.5,8.7]){
+  part(2.15,3.05,.18,roofMat,x,y,-6.58);
+  part(1.72,2.62,.1,windowMat,x,y,-6.7);
+  part(2.32,.16,.3,trim,x,y-1.62,-6.78);part(2.32,.16,.3,trim,x,y+1.62,-6.78);
+  part(.13,2.8,.24,trim,x-1.02,y,-6.79);part(.13,2.8,.24,trim,x+1.02,y,-6.79);
+  part(.1,2.55,.12,stoneLight,x,y,-6.79);
+ }
+}
+// Ground-floor plinth openings and a recessed central doorway
+for(const x of [-13,-8.5,-4,4,8.5,13]){
+ part(2.1,2.4,.18,roofMat,x,2.45,-6.58);
+ part(1.65,1.95,.1,windowMat,x,2.45,-6.7);
+ part(2.28,.15,.26,trim,x,1.2,-6.78);
+}
+part(3.3,4.2,.22,roofMat,0,2.9,-6.66);
+part(2.25,3.25,.12,windowMat,0,2.75,-6.8);
+part(.18,3.7,.25,trim,-1.25,2.9,-6.88);part(.18,3.7,.25,trim,1.25,2.9,-6.88);
+part(4.2,.2,.28,trim,0,5.05,-6.88);
+// Side wings, continuous cornice and parapet details
+for(const x of [-20,20]){
+ part(7,8.5,12,stone,x,4.25,0);
+ part(7.25,.35,12.25,trim,x,8.65,0);
+ part(7.15,.6,12.15,stoneLight,x,9.05,0);
+ for(const wx of [x-1.8,x+1.8]){
+  part(1.35,3.2,.16,roofMat,wx,4.8,-6.08);
+  part(1.05,2.75,.1,windowMat,wx,4.8,-6.2);
+  part(1.55,.14,.24,trim,wx,3.15,-6.27);
+ }
+}
+// Stone forecourt and broad shallow entrance steps
+part(30,.65,14,stoneLight,0,.55,-.2);
+part(10,.28,5,trim,0,.22,-10);
 for(let i=0;i<5;i++)part(10-i*1.5,.18,.7,trim,0,.12+i*.18,-9.3-i*.7);
-// Side wings and roof details give the landmark a recognisable civic silhouette
-for(const x of [-20,20]){part(7,8,12,stone,x,4,0);part(7.4,.45,12.4,trim,x,8.2,0);part(7.2,.45,12.2,roofMat,x,8.65,0)}
 // Solid collision volumes: pedestrians and vehicles must stay outside every library wall.
 colliders.push({x:0,z:-3,w:34,d:13},{x:-20,z:0,w:7,d:12},{x:20,z:0,w:7,d:12});
 // Square paving joints, benches, planters and mature trees
