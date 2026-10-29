@@ -67,9 +67,31 @@ function shuffleStartingLocations(){if(typeof window.randomizeStartingLocations=
    const up=pressed(12),down=pressed(13),left=pressed(14),right=pressed(15);
    const cross=pressed(0);
    const count=(window.startingLocations||[]).length;
-   const columns=Math.max(1,document.getElementById('startPlaces')?.style.gridTemplateColumns?.split(' ').length||getComputedStyle(document.getElementById('startPlaces')).gridTemplateColumns.split(' ').length||1);
-   if(up&&!lastUp){window.startingLocationIndex=Math.max(0,(window.startingLocationIndex||0)-columns);markStartSelection();}
-   if(down&&!lastDown){window.startingLocationIndex=Math.min(count-1,(window.startingLocationIndex||0)+columns);markStartSelection();}
+   const buttons=Array.from(document.querySelectorAll('#startPlaces button'));
+   const current=buttons[window.startingLocationIndex||0];
+   // Move vertically to the nearest button in the next visual row, rather than
+   // stepping through every location as if the list were one long column.
+   function moveRow(direction){
+    if(!current||!buttons.length)return;
+    const currentRect=current.getBoundingClientRect();
+    const rows=[];
+    buttons.forEach((button,index)=>{
+     const rect=button.getBoundingClientRect();
+     let row=rows.find(r=>Math.abs(r.top-rect.top)<8);
+     if(!row){row={top:rect.top,items:[]};rows.push(row);}
+     row.items.push({index,center:rect.left+rect.width/2});
+    });
+    rows.sort((a,b)=>a.top-b.top);
+    const rowIndex=rows.findIndex(row=>row.items.some(item=>item.index===(window.startingLocationIndex||0)));
+    const targetRow=rows[rowIndex+direction];
+    if(!targetRow)return;
+    const center=currentRect.left+currentRect.width/2;
+    targetRow.items.sort((a,b)=>Math.abs(a.center-center)-Math.abs(b.center-center));
+    window.startingLocationIndex=targetRow.items[0].index;
+    markStartSelection();
+   }
+   if(up&&!lastUp){moveRow(-1);}
+   if(down&&!lastDown){moveRow(1);}
    if(left&&!lastLeft){window.startingLocationIndex=Math.max(0,(window.startingLocationIndex||0)-1);markStartSelection();}
    if(right&&!lastRight){window.startingLocationIndex=Math.min(count-1,(window.startingLocationIndex||0)+1);markStartSelection();}
    if(cross&&!lastCross){window.enterSelectedStartingLocation?.();}
