@@ -300,7 +300,7 @@ function pollGamepad(dt){
  padUpWasDown=upDown;padDownWasDown=downDown;padLeftWasDown=leftDown;padRightWasDown=rightDown;padCrossWasDown=crossDown;padSprintWasDown=sprintDown;
  padInteractWasDown=squareDown;padResetWasDown=circleDown;padTriangleWasDown=triangleDown;
  padRT=pad.buttons[7]?.value||0;padLT=pad.buttons[6]?.value||0;
- cameraYawOffset=0;cameraPitchOffset=0;
+
 }
 function nearestDestination(p){return destinations.reduce((best,d)=>Math.hypot(p.x-d.x,p.z-d.z)<Math.hypot(p.x-best.x,p.z-best.z)?d:best,destinations[0])}
 function toast(s){const el=document.querySelector('#toast');el.textContent=s;el.style.opacity=1;toastTime=2.4}
