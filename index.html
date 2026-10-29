@@ -62,10 +62,7 @@ function shuffleStartingLocations(){if(typeof window.randomizeStartingLocations=
   const pads=navigator.getGamepads?navigator.getGamepads():[];
   const pad=Array.from(pads).find(p=>p&&p.connected);
   if(pad&&document.getElementById('start').style.display!=='none'){
-   const lookLeft=rx<-.65,lookRight=rx>.65,lookUp=ry<-.65,lookDown=ry>.65;
- if(!phoneOpen&&!locationMenuOpen){if(lookLeft&&!cameraLookLeftWasDown)cameraYawOffset-=Math.PI/4;if(lookRight&&!cameraLookRightWasDown)cameraYawOffset+=Math.PI/4;if(lookUp&&!cameraLookUpWasDown)cameraPitchOffset=Math.min(Math.PI/3,cameraPitchOffset+Math.PI/4);if(lookDown&&!cameraLookDownWasDown)cameraPitchOffset=Math.max(-Math.PI/6,cameraPitchOffset-Math.PI/4)}
- cameraLookLeftWasDown=lookLeft;cameraLookRightWasDown=lookRight;cameraLookUpWasDown=lookUp;cameraLookDownWasDown=lookDown;
- const pressed=i=>!!pad.buttons[i]?.pressed;
+   const pressed=i=>!!pad.buttons[i]?.pressed;
    // Use the actual D-pad buttons so all four directions navigate the location grid.
    const up=pressed(12),down=pressed(13),left=pressed(14),right=pressed(15);
    const cross=pressed(0);
@@ -278,6 +275,9 @@ function pollGamepad(dt){
  const mag=Math.hypot(lx,ly);if(mag>1){lx/=mag;ly/=mag}
  padMoveX=lx;padMoveY=ly;
  const rx=shape(pad.axes[2]||0),ry=shape(pad.axes[3]||0);
+ const lookLeft=rx<-.65,lookRight=rx>.65,lookUp=ry<-.65,lookDown=ry>.65;
+ if(!phoneOpen&&!locationMenuOpen){if(lookLeft&&!cameraLookLeftWasDown)cameraYawOffset-=Math.PI/4;if(lookRight&&!cameraLookRightWasDown)cameraYawOffset+=Math.PI/4;if(lookUp&&!cameraLookUpWasDown)cameraPitchOffset=Math.min(Math.PI/3,cameraPitchOffset+Math.PI/4);if(lookDown&&!cameraLookDownWasDown)cameraPitchOffset=Math.max(-Math.PI/6,cameraPitchOffset-Math.PI/4)}
+ cameraLookLeftWasDown=lookLeft;cameraLookRightWasDown=lookRight;cameraLookUpWasDown=lookUp;cameraLookDownWasDown=lookDown;
  const pressed=i=>!!pad.buttons[i]?.pressed;
  const upDown=pressed(12),downDown=pressed(13)||(locationMenuOpen&&padMoveY>.65),leftDown=pressed(14),rightDown=pressed(15),crossDown=pressed(0);const sprintDown=crossDown;
  const circleDown=pressed(1),squareDown=pressed(2),triangleDown=pressed(3);
