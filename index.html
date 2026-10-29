@@ -156,13 +156,7 @@ part(40,7.2,12.4,stone,0,7.95,0);
 part(42,.38,13.5,trim,0,11.72,0);
 part(42,.7,13.2,stoneLight,0,12.25,0);
 part(42,.25,13.4,trim,0,12.75,0);
-// Red-brown brick plinth band on the street-facing lower facade.
-part(44,.82,.34,M.brick,0,.92,-6.96);
-part(44,.12,.4,M.brick2,0,1.39,-7.02);
-for(let row=0;row<2;row++)for(let x=-21.2;x<=21.2;x+=1.25){
- const bx=x+(row%2)*.62;
- part(1.16,.035,.025,M.brick3,bx,.68+row*.36,-7.145,false);
-}
+// The reference shows a continuous pale stone basement, not a brick plinth.
 // Ground floor openings
 for(const x of [-18,-13,-8,-3,3,8,13,18]){
  part(2.25,2.5,.18,roofMat,x,2.55,-6.82);
@@ -208,7 +202,7 @@ for(let i=0;i<11;i++){
  const head=new THREE.Mesh(new THREE.SphereGeometry(.13,10,8),stone);head.position.y=.35;statue.add(head);
 }
 // Left-hand clock tower: stepped stages, open belfry and pointed cap
-const tower=new THREE.Group();tower.position.set(24,0,-1);library.add(tower);
+const tower=new THREE.Group();tower.position.set(-31,0,-1);scene.add(tower);
 function tbox(w,h,d,m,x,y,z){const q=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);q.position.set(x,y,z);q.castShadow=true;q.receiveShadow=true;tower.add(q);return q}
 function tc(rt,rb,h,m,x,y,z,n=16){const q=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,n),m);q.position.set(x,y,z);q.castShadow=true;tower.add(q);return q}
 tbox(7,9,10,stone,-.5,4.5,0);tbox(7.5,.35,10.5,trim,-.5,9.1,0);
@@ -226,7 +220,7 @@ tc(.08,.08,1.1,trim,-.5,30.15,0,8);
 // Cornice stones and parapet rhythm
 for(let x=-20;x<=20;x+=1.5)part(.22,.48,.3,stoneLight,x,13.38,6.25);
 // Solid collision volumes: pedestrians and vehicles must stay outside every library wall.
-colliders.push({x:0,z:-3,w:44,d:13.5},{x:24.5,z:-4,w:7.5,d:10});
+colliders.push({x:0,z:-3,w:44,d:13.5},{x:-31.5,z:-4,w:7.5,d:10});
 // Square paving joints, benches, planters and mature trees
 for(let x=-48;x<=48;x+=8)for(let z=-14;z<=14;z+=7){const seam=cube(scene,.035,.012,5.8,mat(0x88877e),x,.04,z,false)}
 for(const x of [-39,39])for(const z of [-10,10]){
