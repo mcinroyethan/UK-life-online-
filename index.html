@@ -230,28 +230,6 @@ for(const x of [-39,39])for(const z of [-10,10]){
 }
 for(const x of [-52,-26,26,52])for(const z of [-17,17]){cube(scene,.12,4.5,.12,M.dark,x,2.25,z,false);cube(scene,.65,.16,.45,M.yellow,x,4.45,z,false)}
 const allCars=[];function makeCar(color,x,z,rot=0,scale=1){const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=rot;g.scale.setScalar(scale);g.userData.speed=0;allCars.push(g);scene.add(g);cube(g,1.85,.62,3.7,mat(color,.38,.28),0,.72,0);cube(g,1.42,.67,1.65,M.glass,0,1.3,-.12);for(const xx of [-.95,.95])for(const zz of [-1.18,1.18]){const wh=new THREE.Mesh(new THREE.CylinderGeometry(.31,.31,.19,16),M.dark);wh.rotation.z=Math.PI/2;wh.position.set(xx,.37,zz);wh.castShadow=true;g.add(wh)}for(const xx of [-.58,.58]){cube(g,.28,.15,.06,M.white,xx,.78,1.88,false);cube(g,.28,.15,.06,mat(0xb13b2e),xx,.78,-1.88,false)}return g}
-// Small town high-street shopfronts, set beyond the square so they do not crowd Harris.
-const shopMat=mat(0xd6c9b3,.9),shopDark=mat(0x252b30,.8),shopGlass=mat(0x29424b,.22,.12);
-function makeShop(x,z,name,signColor){
- const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
- cube(g,13,7,9,shopMat,0,3.5,0);
- cube(g,13.4,.45,9.4,roofMat,0,7.12,0);
- cube(g,12.2,2.5,.18,shopDark,0,2.2,-4.58);
- cube(g,11.4,1.85,.12,shopGlass,0,2.25,-4.72);
- cube(g,12.4,.22,.3,trim,0,3.55,-4.78);
- cube(g,7.6,.95,.24,mat(signColor,.55),0,5.05,-4.72);
- const canvas=document.createElement('canvas');canvas.width=512;canvas.height=96;
- const ctx=canvas.getContext('2d');ctx.fillStyle='#f6f0e4';ctx.font='bold 64px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(name,256,49);
- const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
- const label=new THREE.Mesh(new THREE.PlaneGeometry(7.4,.9),new THREE.MeshBasicMaterial({map:texture,transparent:true}));
- label.position.set(0,5.05,-4.88);g.add(label);
- colliders.push({x:x,z:z,w:13,d:9});
- return g;
-}
-makeShop(-53,-32,'KFG',0x9d2020);
-makeShop(-35,-32,'BARGAIN BARN',0x2e6649);
-makeShop(53,-32,'PRESTON PASTRIES',0xb66b37);
-makeShop(35,-32,'GADGET GROTTO',0x315c87);
 // Parked vehicles will be placed in marked kerb spaces as the streets are built.
 const trafficCars=[]; // Traffic is disabled until Preston's carriageways and junctions are laid out safely.
 function makeStreetLight(x,z){const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);const pole=new THREE.Mesh(new THREE.CylinderGeometry(.075,.11,5.4,8),M.metal);pole.position.y=2.7;g.add(pole);const arm=cube(g,.9,.09,.1,M.metal,.38,5.25,0,false);const bulb=new THREE.Mesh(new THREE.BoxGeometry(.42,.12,.26),new THREE.MeshStandardMaterial({color:0xffe8a3,emissive:0xffcf69,emissiveIntensity:1.2}));bulb.position.set(.72,5.18,0);g.add(bulb);const glow=new THREE.PointLight(0xffd98a,1.25,13,2);glow.position.set(.72,5.0,0);g.add(glow);return g}
