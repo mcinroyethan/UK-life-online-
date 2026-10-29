@@ -17,14 +17,19 @@
 <div id="start"><div id="card"><div class="eyebrow">CONTROLLER-FIRST OPEN WORLD</div><h1>UK LIFE<br><span>ONLINE</span></h1><p>Built to play with a controller. Explore the UK-inspired open world, drive around the city, take delivery jobs and travel between destinations using the D-pad and sticks.</p><p><b>Choose your starting town</b> — choose one of six real UK locations, then spawn at a random nearby spot. Your first spawn is free; in-game teleports cost £500.</p><div id="startPlaces" aria-label="Choose starting area"></div><button id="play">ENTER UK LIFE ONLINE</button><p class="note">Controller recommended. Connect your gamepad before pressing Cross to enter. Multiplayer and cloud accounts are not enabled yet; an internet connection is required.</p></div></div>
 <div id="locationMenu" role="dialog" aria-modal="true" aria-label="Choose a teleport destination"><h2>Choose a destination</h2><div class="hint">Use D-pad ↑ / ↓ to select a place.</div><div id="locationOptions"></div><div class="footer">✕ TELEPORT · ○ CANCEL · COST: £500</div></div><button id="teleportOpen" type="button">CHOOSE DESTINATION</button><div id="phone" role="dialog" aria-modal="true" aria-label="In-game phone"><div id="phoneTop"><div id="phoneBrand"><span>UK PHONE</span><span>● ● ●</span></div><div id="phoneClock">NORTH QUAY · CONNECTED</div></div><div id="phoneBody"><div id="phoneHome"><button class="phoneApp" data-app="teleport"><span class="phoneIcon">T</span>Teleport</button><button class="phoneApp" data-app="map"><span class="phoneIcon">M</span>Map & GPS</button><button class="phoneApp" data-app="bank"><span class="phoneIcon">B</span>Bank</button><button class="phoneApp" data-app="jobs"><span class="phoneIcon">J</span>Jobs</button><button class="phoneApp" data-app="settings"><span class="phoneIcon">⚙</span>Settings</button></div><div id="phoneScreen"></div></div><div id="phoneFooter">D-pad: select · ✕ Cross: open · ○ Circle: close</div></div>
 <script>
-window.startingLocations=[
- {name:'London',x:8,z:-42,radius:5},
- {name:'Manchester',x:-16,z:-9,radius:5},
- {name:'Birmingham',x:-8,z:-24,radius:5},
- {name:'Glasgow',x:-23,z:39,radius:5},
- {name:'Cardiff',x:-28,z:-43,radius:5},
- {name:'Belfast',x:-55,z:12,radius:4}
+// Show ten randomized starting choices immediately, while the 3D module loads.
+const fallbackTownPool=[
+ {name:'London',x:8,z:-42,radius:5},{name:'Manchester',x:-16,z:-9,radius:5},
+ {name:'Birmingham',x:-8,z:-24,radius:5},{name:'Glasgow',x:-23,z:39,radius:5},
+ {name:'Cardiff',x:-28,z:-43,radius:5},{name:'Belfast',x:-55,z:12,radius:4},
+ {name:'Liverpool',x:-26,z:-10,radius:5},{name:'Edinburgh',x:-8,z:43,radius:5},
+ {name:'Bristol',x:-24,z:-34,radius:5},{name:'Newcastle',x:2,z:20,radius:5},
+ {name:'Leeds',x:-2,z:-1,radius:5},{name:'Sheffield',x:-4,z:-5,radius:5},
+ {name:'Nottingham',x:-8,z:-15,radius:5},{name:'Oxford',x:-1,z:-37,radius:5},
+ {name:'Cambridge',x:8,z:-29,radius:5},{name:'York',x:-2,z:6,radius:5}
 ];
+for(let i=fallbackTownPool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[fallbackTownPool[i],fallbackTownPool[j]]=[fallbackTownPool[j],fallbackTownPool[i]];}
+window.startingLocations=fallbackTownPool.slice(0,10);
 window.startingLocationIndex=0;
 (function renderFallbackStartPlaces(){
  const el=document.getElementById('startPlaces');
