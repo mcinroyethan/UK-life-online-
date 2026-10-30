@@ -183,14 +183,25 @@ for(let z=-41;z<=-13;z+=7){
  const strip=new THREE.Mesh(new THREE.PlaneGeometry(51,.12),mat(0x918e85,.96));
  strip.rotation.x=-Math.PI/2;strip.position.set(0,.036,z);scene.add(strip);
 }
-// Main streets and gently angled links create less rigid approaches into the centre.
-road(-72,-49,176,10);road(-46,42,142,10);road(-57,-91,150,9);
-road(57,-25,10,142);road(-113,-24,9,120);road(-73,-20,8,62);
-road(-20,-5,8,54);road(25,-4,8,92);road(-72,-118,10,46);
+// Preston street-network blockout, aligned to the published city-centre street map.
+// The Flag Market is the anchor. Fishergate runs west towards the railway station;
+// Friargate and Church Street form the parallel historic routes, with cross streets
+// connecting them. These are still approximate game-space dimensions, not surveyed metres.
+road(-72,-49,176,10);                 // Fishergate
+road(-57,-91,150,9);                  // Friargate
+road(-46,42,142,10);                  // Church Street
+road(57,-25,10,142);                  // Lancaster Road
+road(-113,-24,9,120);                 // west-side approach
+road(-73,-20,8,62);                   // Cheapside approach
+road(-20,-5,8,54);                    // central west/east connector
+road(25,-4,8,92);                     // eastern connector
+road(-72,-118,10,46);                 // western continuation
 road(-48,-70,8,42);road(-5,-70,8,42);road(34,-70,8,42);
 road(-48,4,8,46);road(3,4,8,46);road(77,20,8,58);
+// Diagonal street connections rather than forcing every junction into a square grid.
 roadLink(-73,-20,-67,-35,8);roadLink(-67,-35,-57,-49,8);
 roadLink(25,-4,32,-20,8);roadLink(32,-20,43,-34,8);
+// Keep kerb strips simple in this layout-only phase.
 for(const z of [-42,-56,35,49,-85,-97])pavement(-72,z,176,2.4);
 for(const x of [-118,-108,-77,-69,-24,-16,21,29,53,61])pavement(x,-25,2.4,138);
 // Connected shop terraces with varied upper floors instead of isolated grey placeholder cubes.
