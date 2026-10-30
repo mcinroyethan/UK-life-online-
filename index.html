@@ -141,34 +141,77 @@ const colliders=[];
 // This is a playable first-pass layout, not a survey-grade reconstruction.
 function road(x,z,w,d){cube(scene,w,.12,d,streetMat,x,.005,z,false)}
 function pavement(x,z,w,d){cube(scene,w,.2,d,stoneLight,x,.04,z,false)}
-function block(x,z,w,d,h=11){
+function shopBlock(x,z,w,d,h=11,variant=0){
  const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
- cube(g,w,h,d,mat(0x8d918d,.96),0,h/2,0);
- cube(g,w+.35,.35,d+.35,mat(0x555b5b,.95),0,h+.15,0);
+ const walls=[0xb9b1a2,0xc7bba6,0xa9aaa4,0xb9a99a,0xc4c0b5];
+ const wall=mat(walls[variant%walls.length],.94),frame=mat(0x343b3d,.72),glass=mat(0x344d58,.24,.12),sign=mat(0xe6dfcf,.82),awning=mat([0x657b83,0x8b5948,0x68745e,0x77706a][variant%4],.86);
+ cube(g,w,h,d,wall,0,h/2,0);
+ cube(g,w+.45,.38,d+.45,roofMat,0,h+.18,0);
+ // Ground-floor shopfront, facing the main street (-Z): wide glazing, doorway and a blank fascia.
+ const front=-d/2-.035, shopW=w*.78, doorX=w*.29;
+ cube(g,shopW,3.05,.16,frame,0,1.85,front);
+ cube(g,shopW-.42,2.55,.07,glass,0,1.82,front-.1);
+ cube(g,.18,2.75,.2,frame,doorX,1.45,front-.17);
+ cube(g,.78,2.45,.07,glass,doorX,1.45,front-.28);
+ cube(g,w*.86,.72,.28,sign,0,3.78,front-.12);
+ cube(g,w*.9,.13,.5,awning,0,3.32,front-.23);
+ // Upper-floor windows and stone lintels.
+ const count=Math.max(2,Math.floor(w/5));
+ for(let i=0;i<count;i++){
+  const px=-w*.36+i*(w*.72/Math.max(1,count-1));
+  cube(g,1.65,2.15,.12,frame,px,h*.68,front);
+  cube(g,1.35,1.82,.07,glass,px,h*.68,front-.08);
+  cube(g,1.9,.12,.2,sign,px,h*.68-1.12,front-.12);
+ }
+ // Side pilasters and simple roofline detail.
+ for(const px of [-w/2+.35,w/2-.35])cube(g,.32,h,.3,sign,px,h/2,front-.12);
+ cube(g,w+.65,.28,.55,trim,0,h+.35,front-.08);
 }
-const square=new THREE.Mesh(new THREE.PlaneGeometry(54,34),mat(0xaaa69a,.96));
+function roadLink(x1,z1,x2,z2,width=8){
+ const dx=x2-x1,dz=z2-z1,len=Math.hypot(dx,dz);
+ const r=cube(scene,len,.12,width,streetMat,(x1+x2)/2,.005,(z1+z2)/2,false);
+ r.rotation.y=-Math.atan2(dz,dx);
+}
+const square=new THREE.Mesh(new THREE.PlaneGeometry(54,34),mat(0xbab6aa,.96));
 square.rotation.x=-Math.PI/2;square.position.set(0,.018,-27);square.receiveShadow=true;scene.add(square);
-// Main east-west streets.
-road(-72,-49,176,10); // Fishergate: Flag Market towards the railway station
-road(-46,42,142,10); // Church Street
-road(-57,-91,150,9); // Friargate
-// North-south streets and approaches.
+// Flag Market paving: broad stone bands and a central open gathering space.
+for(let x=-24;x<=24;x+=6){
+ const strip=new THREE.Mesh(new THREE.PlaneGeometry(.12,31),mat(0x918e85,.96));
+ strip.rotation.x=-Math.PI/2;strip.position.set(x,.035,-27);scene.add(strip);
+}
+for(let z=-41;z<=-13;z+=7){
+ const strip=new THREE.Mesh(new THREE.PlaneGeometry(51,.12),mat(0x918e85,.96));
+ strip.rotation.x=-Math.PI/2;strip.position.set(0,.036,z);scene.add(strip);
+}
+// Main streets and gently angled links create less rigid approaches into the centre.
+road(-72,-49,176,10);road(-46,42,142,10);road(-57,-91,150,9);
 road(57,-25,10,142);road(-113,-24,9,120);road(-73,-20,8,62);
 road(-20,-5,8,54);road(25,-4,8,92);road(-72,-118,10,46);
-// Side streets linking the main shopping spine.
 road(-48,-70,8,42);road(-5,-70,8,42);road(34,-70,8,42);
 road(-48,4,8,46);road(3,4,8,46);road(77,20,8,58);
-// Pavements along the principal streets.
+roadLink(-73,-20,-67,-35,8);roadLink(-67,-35,-57,-49,8);
+roadLink(25,-4,32,-20,8);roadLink(32,-20,43,-34,8);
 for(const z of [-42,-56,35,49,-85,-97])pavement(-72,z,176,2.4);
 for(const x of [-118,-108,-77,-69,-24,-16,21,29,53,61])pavement(x,-25,2.4,138);
-// Plain building masses establish the blocks without adding shopfronts yet.
-block(-137,-48,20,18,13);block(-111,-69,18,19,15);block(-92,-70,18,19,12);
-block(-42,-70,19,18,13);block(-18,-70,18,18,15);block(9,-70,17,18,12);
-block(49,-70,20,17,14);block(81,-70,25,17,13);
-block(-136,2,20,24,12);block(-94,4,22,24,14);block(-43,5,18,22,12);
-block(48,5,20,22,15);block(83,5,25,22,12);
-block(-135,68,22,22,12);block(-91,68,22,22,14);block(-44,68,20,22,12);
-block(7,68,20,22,13);block(49,68,22,22,15);block(89,68,24,22,12);
+// Connected shop terraces with varied upper floors instead of isolated grey placeholder cubes.
+shopBlock(-137,-48,20,18,13,0);shopBlock(-111,-69,18,19,15,1);shopBlock(-92,-70,18,19,12,2);
+shopBlock(-42,-70,19,18,13,3);shopBlock(-18,-70,18,18,15,1);shopBlock(9,-70,17,18,12,2);
+shopBlock(49,-70,20,17,14,0);shopBlock(81,-70,25,17,13,4);
+shopBlock(-136,2,20,24,12,2);shopBlock(-94,4,22,24,14,1);shopBlock(-43,5,18,22,12,3);
+shopBlock(48,5,20,22,15,4);shopBlock(83,5,25,22,12,0);
+shopBlock(-135,68,22,22,12,1);shopBlock(-91,68,22,22,14,3);shopBlock(-44,68,20,22,12,0);
+shopBlock(7,68,20,22,13,2);shopBlock(49,68,22,22,15,4);shopBlock(89,68,24,22,12,1);
+// Temporary market stalls around the edge of the Flag Market; keep the centre open.
+function marketStall(x,z,c){
+ const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
+ const wood=mat(0x66513d,.9),cloth=mat(c,.86);
+ cube(g,2.7,.18,1.8,wood,0,1.35,0);
+ for(const px of [-1.15,1.15])for(const pz of [-.7,.7])cube(g,.12,2.6,.12,wood,px,1.3,pz);
+ cube(g,3,.16,2.1,cloth,0,2.65,0);
+ cube(g,2.85,.12,.12,cloth,0,1.95,-.92);
+}
+marketStall(-20,-20,0x9b765d);marketStall(20,-20,0x718675);
+marketStall(-20,-34,0x8a7c9a);marketStall(20,-34,0xb28b55);
 // Detailed park paths, terrain contours and river geography come in a later pass.
 // Harris Library facade: a cleaner, proportion-led reconstruction of the supplied front view.
 const library=new THREE.Group();library.position.set(0,0,-3);scene.add(library);
