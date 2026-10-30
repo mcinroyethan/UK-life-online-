@@ -139,67 +139,12 @@ const colliders=[];
 // Preston centre — deliberately restrained first blockout.
 // Keep the Flag Market and Harris as the only completed massing here.
 // Do not invent streets or scatter generic shop blocks before the map is verified.
-// Landmark: Thos. Yates Jewellers, 33 Market Place — historic timber-framed shop.
-{
- const yates=new THREE.Group();yates.position.set(-22,0,-27);yates.scale.setScalar(.58);scene.add(yates);
- const plaster=mat(0xe1d5b8,.94),darkOak=mat(0x38271e,.9),oakEdge=mat(0x513729,.9);
- const glass=mat(0x344b50,.28,.12),lead=mat(0x242b2a,.72),roof=mat(0x3d4140,.96),stoneBase=mat(0x9b9587,.96);
- // Narrow, tall historic frontage with projecting upper storeys.
- cube(yates,10.8,.65,8.2,stoneBase,0,.35,0);
- cube(yates,10.4,4.2,7.8,plaster,0,2.75,0);
- cube(yates,11.1,.32,8.35,darkOak,0,4.95,0);
- cube(yates,11.3,4.15,8.3,plaster,0,7.05,-.18);
- cube(yates,11.75,.34,8.65,darkOak,0,9.22,-.3);
- cube(yates,11.75,3.15,8.6,plaster,0,10.95,-.42);
- // Steep pitched roof and gable facing the Flag Market (east).
- const roofShape=new THREE.Shape();roofShape.moveTo(-6.1,0);roofShape.lineTo(6.1,0);roofShape.lineTo(0,4.25);roofShape.closePath();
- const gable=new THREE.Mesh(new THREE.ShapeGeometry(roofShape),plaster);gable.position.set(0,12.35,-.42);gable.castShadow=true;yates.add(gable);
- const roofGeo=new THREE.BufferGeometry();
- const roofVerts=new Float32Array([-6.4,12.25,-4.9, 0,16.75,-4.9, 0,16.75,4.1, -6.4,12.25,-4.9, 0,16.75,4.1, -6.4,12.25,4.1, 0,16.75,-4.9, 6.4,12.25,-4.9, 6.4,12.25,4.1, 0,16.75,-4.9, 6.4,12.25,4.1, 0,16.75,4.1]);
- roofGeo.setAttribute('position',new THREE.BufferAttribute(roofVerts,3));roofGeo.computeVertexNormals();
- const roofMesh=new THREE.Mesh(roofGeo,roof);roofMesh.position.y=0;roofMesh.castShadow=true;yates.add(roofMesh);
- // Exposed dark oak framing on the market-facing elevation.
- const beam=(x,y,z,w,h,d,rot=0)=>{const b=cube(yates,w,h,d,darkOak,x,y,z);b.rotation.z=rot;return b};
- for(const yy of [4.95,5.22,8.98,9.22,12.45])beam(5.57,yy,-4.42,.28,.24,.25);
- for(const xx of [-5.35,-2.7,0,2.7,5.35])beam(xx,7.05,-4.48,.25,4.05,.28);
- for(const xx of [-5.35,-2.7,0,2.7,5.35])beam(xx,10.95,-4.55,.25,3.2,.28);
- for(const yy of [5.25,8.98,9.22,12.45])beam(0,yy,-4.55,11.1,.25,.28);
- for(const xx of [-4.0,-1.35,1.35,4.0]){
-  beam(xx,7.0,-4.65,2.25,.13,.12,.62);
-  beam(xx,10.95,-4.7,2.15,.13,.12,-.62);
- }
- // Small leaded casement windows in the upper floors.
- for(const yy of [6.9,10.85]){
-  for(const xx of [-3.95,-1.35,1.35,3.95]){
-   cube(yates,1.65,2.05,.12,oakEdge,xx,yy,-4.58);
-   cube(yates,1.38,1.78,.07,glass,xx,yy,-4.67);
-   for(const dx of [-.34,0,.34])cube(yates,.055,1.78,.08,lead,xx+dx,yy,-4.72);
-   cube(yates,1.38,.055,.08,lead,xx,yy,-4.72);
-  }
- }
- // Ground-floor jeweller's shopfront and recessed entrance.
- cube(yates,8.8,2.85,.22,oakEdge,0,1.95,-4.18);
- cube(yates,5.9,2.25,.08,glass,-1.1,1.9,-4.34);
- cube(yates,.12,2.45,.12,lead,-1.1,1.9,-4.4);
- cube(yates,1.55,2.45,.12,oakEdge,3.45,1.72,-4.35);
- cube(yates,1.28,2.15,.07,glass,3.45,1.72,-4.43);
- // Traditional fascia, restrained gold lettering and hanging sign.
- cube(yates,8.9,.68,.38,darkOak,0,3.72,-4.32);
- cube(yates,8.15,.08,.08,mat(0xc2a15d,.7),0,3.72,-4.55);
- const signCanvas=document.createElement('canvas');signCanvas.width=512;signCanvas.height=96;
- const ctx=signCanvas.getContext('2d');ctx.fillStyle='#30251d';ctx.fillRect(0,0,512,96);
- ctx.fillStyle='#d7bd7a';ctx.font='bold 42px Georgia';ctx.textAlign='center';ctx.fillText('THOS. YATES',256,62);
- const signTex=new THREE.CanvasTexture(signCanvas);
- const signMesh=new THREE.Mesh(new THREE.PlaneGeometry(7.9,.55),new THREE.MeshBasicMaterial({map:signTex,transparent:false}));
- signMesh.position.set(0,3.73,-4.56);yates.add(signMesh);
- // Chimney stack and roof ridge detail.
- cube(yates,1.1,3.1,1.15,mat(0x725c4a,.95),-3.7,15.1,.8);
- cube(yates,1.35,.2,1.4,darkOak,-3.7,16.7,.8);
-}
+// Thos. Yates is intentionally held back from this layout pass.
+// Its footprint and exact position need checking against street-level references first.
 // Layout-only phase: keep the Flag Market open and free of temporary stalls.
 // Detailed park paths, terrain contours and river geography come in a later pass.
 // Harris Library facade: a cleaner, proportion-led reconstruction of the supplied front view.
-const library=new THREE.Group();library.position.set(0,0,-3);scene.add(library);
+const library=new THREE.Group();library.position.set(0,0,-3);library.scale.setScalar(1.12);scene.add(library);
 function part(w,h,d,m,x,y,z){return cube(library,w,h,d,m,x,y,z)}
 function cylinder(rt,rb,h,m,x,y,z,n=24){const q=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,n),m);q.position.set(x,y,z);q.castShadow=true;q.receiveShadow=true;library.add(q);return q}
 // broad lower terrace and heavy basement
@@ -276,6 +221,15 @@ tc(.08,.08,1.1,trim,-.5,30.15,0,8);
 for(let x=-20;x<=20;x+=1.5)part(.22,.48,.3,stoneLight,x,13.38,6.25);
 // Solid collision volumes: pedestrians and vehicles must stay outside every library wall.
 colliders.push({x:0,z:-3,w:44,d:13.5},{x:31.5,z:-4,w:7.5,d:10});
+// Flag Market landmark: the Market Obelisk, represented as a slender pale stone monument.
+{
+ const obelisk=new THREE.Group();obelisk.position.set(0,0,-34);scene.add(obelisk);
+ const pale=mat(0xe7e5dc,.82),base=mat(0xbdb9ad,.9);
+ cube(obelisk,3.8,.45,3.8,base,0,.23,0);
+ cube(obelisk,2.9,.45,2.9,pale,0,.68,0);
+ const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.34,.52,6.8,8),pale);shaft.position.y=4.25;shaft.castShadow=true;obelisk.add(shaft);
+ const tip=new THREE.Mesh(new THREE.ConeGeometry(.48,1.5,8),pale);tip.position.y=8.4;tip.castShadow=true;obelisk.add(tip);
+}
 // Layout-only phase: no benches, planters, trees, lamps or street furniture.
 const allCars=[];function makeCar(color,x,z,rot=0,scale=1){const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=rot;g.scale.setScalar(scale);g.userData.speed=0;allCars.push(g);scene.add(g);cube(g,1.85,.62,3.7,mat(color,.38,.28),0,.72,0);cube(g,1.42,.67,1.65,M.glass,0,1.3,-.12);for(const xx of [-.95,.95])for(const zz of [-1.18,1.18]){const wh=new THREE.Mesh(new THREE.CylinderGeometry(.31,.31,.19,16),M.dark);wh.rotation.z=Math.PI/2;wh.position.set(xx,.37,zz);wh.castShadow=true;g.add(wh)}for(const xx of [-.58,.58]){cube(g,.28,.15,.06,M.white,xx,.78,1.88,false);cube(g,.28,.15,.06,mat(0xb13b2e),xx,.78,-1.88,false)}return g}
 // Parked vehicles will be placed in marked kerb spaces as the streets are built.
