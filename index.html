@@ -136,8 +136,6 @@ function cube(parent,w,h,d,material,x,y,z,shadow=true){const o=new THREE.Mesh(ne
 const groundMat=mat(0x78856b,.98),streetMat=mat(0x34383a,.96),stone=mat(0xb9aa91,.9),stoneLight=mat(0xd0c2a8,.88),roofMat=mat(0x34383c,.9),windowMat=mat(0x263e49,.22,.18),trim=mat(0xddd2bd,.75),grassMat=mat(0x647a55,.98);
 const ground=new THREE.Mesh(new THREE.PlaneGeometry(520,520),groundMat);ground.rotation.x=-Math.PI/2;ground.position.y=-.2;ground.receiveShadow=true;scene.add(ground);
 const colliders=[];
-function road(x,z,w,d){cube(scene,w,.09,d,streetMat,x,.005,z,false)}
-function pavement(x,z,w,d){cube(scene,w,.18,d,stoneLight,x,.04,z,false)}
 // Preston city-centre blockout: the Flag Market/Harris sits at the centre,
 // Fishergate runs west towards the railway station, with older streets branching around it.
 // This is a playable first-pass layout, not a survey-grade reconstruction.
