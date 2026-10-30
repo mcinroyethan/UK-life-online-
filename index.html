@@ -8,8 +8,8 @@
 #locationMenu{position:fixed;z-index:30;left:50%;top:50%;transform:translate(-50%,-50%);width:min(390px,calc(100vw - 28px));padding:22px;border:1px solid var(--cyan);border-radius:16px;background:rgba(5,12,19,.96);box-shadow:0 18px 70px #0009;display:none;color:#f4f8fb}#locationMenu h2{margin:0 0 5px;font-size:22px}#locationMenu .hint{font-size:12px;color:#b9c8d2;margin-bottom:14px}#locationOptions{display:grid;gap:7px}#locationOptions button{padding:12px;text-align:left;border:1px solid #52636f;border-radius:9px;background:#14232d;color:#f4f8fb;font:inherit;cursor:pointer}#locationOptions button.selected{border:2px solid var(--pink);background:#263541;color:white}#locationMenu .footer{margin-top:13px;color:var(--cyan);font-size:12px}#teleportOpen{position:fixed;right:14px;bottom:14px;z-index:12;background:#10222d;color:white;border:1px solid var(--cyan);border-radius:9px;padding:10px 12px;font-weight:700;cursor:pointer}
 #teleportOpen{display:none}#phone{position:fixed;z-index:40;right:clamp(12px,4vw,52px);bottom:clamp(12px,4vh,38px);width:min(390px,calc(100vw - 24px));height:min(650px,calc(100vh - 24px));display:none;grid-template-rows:auto 1fr auto;overflow:hidden;border:3px solid #26323b;border-radius:30px;background:#101820;box-shadow:0 18px 70px #000b;color:#f4f8fb;pointer-events:auto}#phone.open{display:grid}#phone.phone-fullscreen{inset:0!important;right:0!important;bottom:0!important;width:100vw!important;height:100vh!important;max-width:none;border-radius:0;border-width:0;z-index:60}#phone.phone-fullscreen #phoneTop{padding:clamp(18px,3vh,34px) clamp(18px,4vw,48px)}#phone.phone-fullscreen #phoneBody{padding:clamp(18px,4vw,48px);overflow:auto}#phone.phone-fullscreen #phoneScreen{max-width:1000px;margin:0 auto}#phone.phone-fullscreen #phoneFooter{padding:16px;font-size:13px}#phoneTop{padding:18px;background:var(--phone-color,#177cc4);color:white}#phoneBrand{display:flex;justify-content:space-between;font-weight:900;letter-spacing:.12em}#phoneClock{font-size:11px;margin-top:5px}#phoneBody{min-height:0;overflow:auto;padding:14px;background:#101820}#phoneHome{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.phoneApp{min-height:100px;border:1px solid #ffffff22;border-radius:16px;background:#202c36;color:white;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font:inherit;font-weight:800;cursor:pointer}.phoneApp.selected,.phoneAction.selected{outline:3px solid var(--pink);outline-offset:1px;background:#344451}.phoneIcon{width:45px;height:45px;display:grid;place-items:center;border-radius:13px;background:var(--phone-color,#177cc4);font-size:25px}#phoneScreen{display:none}#phoneScreen h3{margin:0 0 10px;font-size:19px}.phoneHint{color:#aebfcb;font-size:12px;line-height:1.5;margin:0 0 12px}.phoneAction{width:100%;text-align:left;padding:10px;margin:0 0 8px;border:1px solid #ffffff22;border-radius:10px;background:#202c36;color:white;font:inherit;cursor:pointer}.phoneAction small{display:block;color:#b7c7d1;font-size:11px;margin-top:4px}#phoneFooter{padding:10px;background:#0b1117;color:#bdcbd5;text-align:center;font-size:11px}#phoneMap{width:100%;height:150px;border-radius:12px;background:#182731;margin-bottom:10px}.phoneColorRow{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0}.phoneColor{width:40px;height:40px;border:2px solid #ffffff55;border-radius:50%;cursor:pointer}.phoneColor.selected{outline:3px solid white;outline-offset:3px}@media(max-width:650px){#phone{right:8px;bottom:8px;width:min(350px,calc(100vw - 16px));height:min(590px,calc(100vh - 16px))}}</style></head>
 <body><canvas id="game"></canvas><div id="hud">
-<div id="brand" class="panel"><div class="logo">UK LIFE <span>ONLINE</span></div><div class="sub">NORTH QUAY · EARLY ACCESS</div></div>
-<div id="stats" class="panel"><div id="money">£250</div><div id="district">NORTH QUAY</div></div>
+<div id="brand" class="panel"><div class="logo">UK LIFE <span>ONLINE</span></div><div class="sub">PRESTON · CITY CENTRE BLOCKOUT</div></div>
+<div id="stats" class="panel"><div id="money">£250</div><div id="district">PRESTON</div></div>
 <div id="mission" class="panel"><b>FIRST SHIFT · DELIVERY</b><div id="missionText">To begin a job, open your phone with D-pad ↑ and choose J · Jobs.</div></div>
 <div id="controls" class="panel"><div style="font-weight:900;color:var(--cyan);letter-spacing:.12em;margin-bottom:5px">CONTROLLER CONTROLS</div><span id="padStatus" style="color:var(--cyan)">Connect controller to play</span><br><kbd>Left stick</kbd> move / steer<br><kbd>Right stick</kbd> look around<br><kbd>□ Square</kbd> interact<br><kbd>△ Triangle</kbd> enter / exit car<br><kbd>R2</kbd> accelerate · <kbd>L2</kbd> brake / reverse<br><kbd>✕ Cross</kbd> sprint / confirm<br><kbd>方向 pad</kbd> open destinations · <kbd>○ Circle</kbd> cancel</div>
 <div id="mapbox" class="panel"><canvas id="map" width="142" height="142"></canvas></div><div id="prompt" class="panel"></div><div id="toast" class="panel"></div>
@@ -258,17 +258,7 @@ shopBlock(7,68,20,22,13,2);shopBlock(49,68,22,22,15,4);shopBlock(89,68,24,22,12,
  cube(yates,1.1,3.1,1.15,mat(0x725c4a,.95),-3.7,15.1,.8);
  cube(yates,1.35,.2,1.4,darkOak,-3.7,16.7,.8);
 }
-// Temporary market stalls around the edge of the Flag Market; keep the centre open.
-function marketStall(x,z,c){
- const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
- const wood=mat(0x66513d,.9),cloth=mat(c,.86);
- cube(g,2.7,.18,1.8,wood,0,1.35,0);
- for(const px of [-1.15,1.15])for(const pz of [-.7,.7])cube(g,.12,2.6,.12,wood,px,1.3,pz);
- cube(g,3,.16,2.1,cloth,0,2.65,0);
- cube(g,2.85,.12,.12,cloth,0,1.95,-.92);
-}
-marketStall(-20,-20,0x9b765d);marketStall(20,-20,0x718675);
-marketStall(-20,-34,0x8a7c9a);marketStall(20,-34,0xb28b55);
+// Layout-only phase: keep the Flag Market open and free of temporary stalls.
 // Detailed park paths, terrain contours and river geography come in a later pass.
 // Harris Library facade: a cleaner, proportion-led reconstruction of the supplied front view.
 const library=new THREE.Group();library.position.set(0,0,-3);scene.add(library);
@@ -348,21 +338,14 @@ tc(.08,.08,1.1,trim,-.5,30.15,0,8);
 for(let x=-20;x<=20;x+=1.5)part(.22,.48,.3,stoneLight,x,13.38,6.25);
 // Solid collision volumes: pedestrians and vehicles must stay outside every library wall.
 colliders.push({x:0,z:-3,w:44,d:13.5},{x:31.5,z:-4,w:7.5,d:10});
-// Square paving joints, benches, planters and mature trees
-for(let x=-48;x<=48;x+=8)for(let z=-14;z<=14;z+=7){const seam=cube(scene,.035,.012,5.8,mat(0x88877e),x,.04,z,false)}
-for(const x of [-39,39])for(const z of [-10,10]){
- const planter=cube(scene,3,.55,3,mat(0x77796b),x,.28,z,false);
- const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.22,.32,3.5,9),mat(0x594936));trunk.position.set(x,2,z);trunk.castShadow=true;scene.add(trunk);
- const crown=new THREE.Mesh(new THREE.SphereGeometry(2.5,14,12),mat(0x426347));crown.position.set(x,4.6,z);crown.castShadow=true;scene.add(crown);
-}
-for(const x of [-52,-26,26,52])for(const z of [-17,17]){cube(scene,.12,4.5,.12,M.dark,x,2.25,z,false);cube(scene,.65,.16,.45,M.yellow,x,4.45,z,false)}
+// Layout-only phase: no benches, planters, trees, lamps or street furniture.
 const allCars=[];function makeCar(color,x,z,rot=0,scale=1){const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=rot;g.scale.setScalar(scale);g.userData.speed=0;allCars.push(g);scene.add(g);cube(g,1.85,.62,3.7,mat(color,.38,.28),0,.72,0);cube(g,1.42,.67,1.65,M.glass,0,1.3,-.12);for(const xx of [-.95,.95])for(const zz of [-1.18,1.18]){const wh=new THREE.Mesh(new THREE.CylinderGeometry(.31,.31,.19,16),M.dark);wh.rotation.z=Math.PI/2;wh.position.set(xx,.37,zz);wh.castShadow=true;g.add(wh)}for(const xx of [-.58,.58]){cube(g,.28,.15,.06,M.white,xx,.78,1.88,false);cube(g,.28,.15,.06,mat(0xb13b2e),xx,.78,-1.88,false)}return g}
 // Parked vehicles will be placed in marked kerb spaces as the streets are built.
 const trafficCars=[]; // Traffic is disabled until Preston's carriageways and junctions are laid out safely.
 function makeStreetLight(x,z){const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);const pole=new THREE.Mesh(new THREE.CylinderGeometry(.075,.11,5.4,8),M.metal);pole.position.y=2.7;g.add(pole);const arm=cube(g,.9,.09,.1,M.metal,.38,5.25,0,false);const bulb=new THREE.Mesh(new THREE.BoxGeometry(.42,.12,.26),new THREE.MeshStandardMaterial({color:0xffe8a3,emissive:0xffcf69,emissiveIntensity:1.2}));bulb.position.set(.72,5.18,0);g.add(bulb);const glow=new THREE.PointLight(0xffd98a,1.25,13,2);glow.position.set(.72,5.0,0);g.add(glow);return g}
-for(let x=-84;x<=84;x+=28){if(Math.abs(x)>30){makeStreetLight(x,-9.8);makeStreetLight(x,9.8)}}
+// Street lighting is deliberately disabled until the road layout is approved.
 const trafficSignals=[];function makeTrafficLight(x,z,rot=0){const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=rot;scene.add(g);const pole=new THREE.Mesh(new THREE.CylinderGeometry(.09,.13,4.4,8),M.metal);pole.position.set(0,2.2,0);g.add(pole);const head=cube(g,.48,1.28,.42,M.dark,0,4.25,0,false);const bulbs=[];for(let i=0;i<3;i++){const color=[0xff2424,0xffc928,0x35e56b][i],glow=new THREE.MeshStandardMaterial({color:0x292929,emissive:color,emissiveIntensity:.04,roughness:.3});const lamp=new THREE.Mesh(new THREE.SphereGeometry(.145,12,10),glow);lamp.position.set(0,4.67-i*.4,.225);g.add(lamp);bulbs.push(lamp)}trafficSignals.push({bulbs,phase:rot===0?0:1});return g}
-makeTrafficLight(-7.5,-7.5,0);makeTrafficLight(7.5,7.5,Math.PI);makeTrafficLight(-7.5,7.5,Math.PI/2);makeTrafficLight(7.5,-7.5,-Math.PI/2);
+// Traffic lights are deliberately disabled until junction geometry is approved.
 let trafficLightClock=0;function updateTrafficLights(dt){trafficLightClock+=dt;const phase=Math.floor(trafficLightClock/7)%2;for(const s of trafficSignals){const green=(phase===s.phase);const activeIndex=green?2:0;for(let i=0;i<3;i++){const m=s.bulbs[i].material;m.emissiveIntensity=i===activeIndex?2.2:.04;m.color.setHex(i===activeIndex?[0xff2424,0xffc928,0x35e56b][i]:0x292929)}}}
 
 
