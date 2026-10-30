@@ -242,6 +242,38 @@ colliders.push({x:0,z:-3,w:44,d:13.5},{x:31.5,z:-4,w:7.5,d:10});
  const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.34,.52,6.8,8),pale);shaft.position.y=4.25;shaft.castShadow=true;obelisk.add(shaft);
  const tip=new THREE.Mesh(new THREE.ConeGeometry(.48,1.5,8),pale);tip.position.y=8.4;tip.castShadow=true;obelisk.add(tip);
 }
+// Preston street-plan pass, aligned to the real city-centre arrangement.
+ // Harris front faces the Flag Market; Fishergate leaves west; the markets continue east.
+ // Street directions are grounded in the OS-based Preston city-centre map. Building depths remain approximate.
+ const mapPave=mat(0xaaa99f,.98),mapKerb=mat(0x777b78,.95),mapRoad=mat(0x292f33,.98);
+ function groundRect(x,z,w,d,m,y=-.12){const q=new THREE.Mesh(new THREE.PlaneGeometry(w,d),m);q.rotation.x=-Math.PI/2;q.position.set(x,y,z);q.receiveShadow=true;scene.add(q)}
+ function roadX(x,z,length,width=8){groundRect(x,z,length,width,mapRoad,-.105);groundRect(x,z-width/2-.22,length,.42,mapKerb,-.09);groundRect(x,z+width/2+.22,length,.42,mapKerb,-.09)}
+ function roadZ(x,z,length,width=8){groundRect(x,z,width,length,mapRoad,-.105);groundRect(x-width/2-.22,z,.42,length,mapKerb,-.09);groundRect(x+width/2+.22,z,.42,length,mapKerb,-.09)}
+ function cityBlock(x,z,w,d,h,wall){
+  const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
+  cube(g,w,h,d,wall,0,h/2,0);cube(g,w+.35,.45,d+.35,roofMat,0,h+.22,0);
+  const win=mat(0x344b55,.3,.12),band=mat(0xd0c2a8,.9);
+  for(let xx=-w/2+1.5;xx<w/2-1;xx+=3.2)for(let yy=2.1;yy<h-1;yy+=3){
+   cube(g,1.05,1.55,.08,win,xx,yy,-d/2-.045,false);
+   cube(g,.08,1.7,.1,band,xx-.57,yy,-d/2-.08,false);
+  }
+  colliders.push({x,z,w:w+.6,d:d+.6});return g;
+ }
+ // Open paved Flag Market, immediately south of the Harris.
+ groundRect(0,-29,58,38,mapPave,-.13);
+ // Main east-west spine: Fishergate west; market quarter east.
+ roadX(-47,-29,36,9);roadX(48,-29,38,8);
+ // Surrounding street links and the Lancaster Road side behind the Harris.
+ roadZ(-34,-2,47,8);roadZ(34,-2,47,8);roadX(0,12,84,8);roadZ(58,-3,40,8);
+ // Approximate surrounding building masses: market buildings east, commercial frontages west/south.
+ cityBlock(42,-19,17,20,10,mat(0x987f65));
+ cityBlock(63,-19,19,22,13,mat(0x9c8b72));
+ cityBlock(-48,-8,18,13,12,mat(0x8a5143));
+ cityBlock(-48,-49,22,15,10,mat(0x985c48));
+ cityBlock(0,-57,28,13,11,mat(0x9a5946));
+ cityBlock(29,15,20,16,14,mat(0x9b8c77));
+ cityBlock(57,15,21,16,11,mat(0x8e6550));
+ // Traffic, signals, lamps and decorative street furniture remain disabled.
 // Layout-only phase: no benches, planters, lamps or street furniture; measured reference tree is above.
 const allCars=[];function makeCar(color,x,z,rot=0,scale=1){const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=rot;g.scale.setScalar(scale);g.userData.speed=0;allCars.push(g);scene.add(g);cube(g,1.85,.62,3.7,mat(color,.38,.28),0,.72,0);cube(g,1.42,.67,1.65,M.glass,0,1.3,-.12);for(const xx of [-.95,.95])for(const zz of [-1.18,1.18]){const wh=new THREE.Mesh(new THREE.CylinderGeometry(.31,.31,.19,16),M.dark);wh.rotation.z=Math.PI/2;wh.position.set(xx,.37,zz);wh.castShadow=true;g.add(wh)}for(const xx of [-.58,.58]){cube(g,.28,.15,.06,M.white,xx,.78,1.88,false);cube(g,.28,.15,.06,mat(0xb13b2e),xx,.78,-1.88,false)}return g}
 // Parked vehicles will be placed in marked kerb spaces as the streets are built.
