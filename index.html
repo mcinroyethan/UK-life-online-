@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 </script>
 <script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.185.0/build/three.module.js';
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js';
 const canvas=document.querySelector('#game'),renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x9cabb4);scene.fog=new THREE.FogExp2(0x9cabb4,.0039);
 const camera=new THREE.PerspectiveCamera(65,innerWidth/innerHeight,.1,500);const cameraAim=new THREE.Object3D();
