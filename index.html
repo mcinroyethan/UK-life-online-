@@ -221,9 +221,14 @@ tc(.08,.08,1.1,trim,-.5,30.15,0,8);
 for(let x=-20;x<=20;x+=1.5)part(.22,.48,.3,stoneLight,x,13.38,6.25);
 // Solid collision volumes: pedestrians and vehicles must stay outside every library wall.
 colliders.push({x:0,z:-3,w:44,d:13.5},{x:31.5,z:-4,w:7.5,d:10});
-// Flag Market landmark: the Market Obelisk, represented as a slender pale stone monument.
+// Provisional straight-line alignment from the Harris facade front: Harris -> tree 11.93 m; tree -> Market Obelisk 12.31 m.
+ // The tree is a reference anchor only until its exact appearance and lateral offset are confirmed.
+ const measuredTreeZ=-11.4-11.93;
+ const measuredObeliskZ=measuredTreeZ-12.31;
+ const treeReference=new THREE.Group();treeReference.position.set(0,0,measuredTreeZ);scene.add(treeReference);
+ // Flag Market landmark: the Market Obelisk, represented as a slender pale stone monument.
 {
- const obelisk=new THREE.Group();obelisk.position.set(0,0,-34);scene.add(obelisk);
+ const obelisk=new THREE.Group();obelisk.position.set(0,0,measuredObeliskZ);scene.add(obelisk);
  const pale=mat(0xe7e5dc,.82),base=mat(0xbdb9ad,.9);
  cube(obelisk,3.8,.45,3.8,base,0,.23,0);
  cube(obelisk,2.9,.45,2.9,pale,0,.68,0);
