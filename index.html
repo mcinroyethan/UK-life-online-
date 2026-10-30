@@ -223,9 +223,16 @@ for(let x=-20;x<=20;x+=1.5)part(.22,.48,.3,stoneLight,x,13.38,6.25);
 colliders.push({x:0,z:-3,w:44,d:13.5},{x:31.5,z:-4,w:7.5,d:10});
 // Provisional straight-line alignment from the Harris facade front: Harris -> tree 11.93 m; tree -> Market Obelisk 12.31 m.
  // The tree is a reference anchor only until its exact appearance and lateral offset are confirmed.
- const measuredTreeZ=-11.4-11.93;
+ const measuredTreeZ=-10.55-11.93; // Harris facade front to tree: 11.93 m
  const measuredObeliskZ=measuredTreeZ-12.31;
  const treeReference=new THREE.Group();treeReference.position.set(0,0,measuredTreeZ);scene.add(treeReference);
+ // Visible tree model; lateral position is provisional because no sideways measurement has been supplied.
+ {
+  const tree=new THREE.Group();tree.position.set(0,0,measuredTreeZ);scene.add(tree);
+  const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.28,.38,3.1,8),mat(0x725039,1));trunk.position.y=1.55;trunk.castShadow=true;tree.add(trunk);
+  const crown=new THREE.Mesh(new THREE.SphereGeometry(2.05,10,8),mat(0x477b43,.95));crown.position.y=4.0;crown.scale.set(1,1.15,1);crown.castShadow=true;tree.add(crown);
+  const crown2=new THREE.Mesh(new THREE.SphereGeometry(1.35,9,7),mat(0x5c914b,.95));crown2.position.set(.75,4.65,.15);crown2.castShadow=true;tree.add(crown2);
+ }
  // Flag Market landmark: the Market Obelisk, represented as a slender pale stone monument.
 {
  const obelisk=new THREE.Group();obelisk.position.set(0,0,measuredObeliskZ);scene.add(obelisk);
@@ -235,7 +242,7 @@ colliders.push({x:0,z:-3,w:44,d:13.5},{x:31.5,z:-4,w:7.5,d:10});
  const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.34,.52,6.8,8),pale);shaft.position.y=4.25;shaft.castShadow=true;obelisk.add(shaft);
  const tip=new THREE.Mesh(new THREE.ConeGeometry(.48,1.5,8),pale);tip.position.y=8.4;tip.castShadow=true;obelisk.add(tip);
 }
-// Layout-only phase: no benches, planters, trees, lamps or street furniture.
+// Layout-only phase: no benches, planters, lamps or street furniture; measured reference tree is above.
 const allCars=[];function makeCar(color,x,z,rot=0,scale=1){const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=rot;g.scale.setScalar(scale);g.userData.speed=0;allCars.push(g);scene.add(g);cube(g,1.85,.62,3.7,mat(color,.38,.28),0,.72,0);cube(g,1.42,.67,1.65,M.glass,0,1.3,-.12);for(const xx of [-.95,.95])for(const zz of [-1.18,1.18]){const wh=new THREE.Mesh(new THREE.CylinderGeometry(.31,.31,.19,16),M.dark);wh.rotation.z=Math.PI/2;wh.position.set(xx,.37,zz);wh.castShadow=true;g.add(wh)}for(const xx of [-.58,.58]){cube(g,.28,.15,.06,M.white,xx,.78,1.88,false);cube(g,.28,.15,.06,mat(0xb13b2e),xx,.78,-1.88,false)}return g}
 // Parked vehicles will be placed in marked kerb spaces as the streets are built.
 const trafficCars=[]; // Traffic is disabled until Preston's carriageways and junctions are laid out safely.
