@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>UK Life Online — North Quay</title>
+<title>UK Life Online — Preston</title>
 <style>
 :root{--cyan:#7be7ff;--panel:rgba(8,15,22,.82);--pink:#ff63bd}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#aebdc2;color:#f4f8fb;font-family:Inter,system-ui,Arial,sans-serif}canvas{display:block;width:100%;height:100%}#hud{position:fixed;inset:0;pointer-events:none}.panel{background:var(--panel);border:1px solid #8be7ff66;border-radius:12px;backdrop-filter:blur(10px);box-shadow:0 8px 30px #0004}#brand{position:absolute;top:16px;left:16px;padding:12px 15px}.logo{font-size:15px;font-weight:950;letter-spacing:.13em}.logo span{color:var(--cyan)}.sub{font-size:10px;color:#bdced7;letter-spacing:.08em;margin-top:4px}#stats{position:absolute;right:16px;top:16px;padding:12px 15px;text-align:right}#money{display:none;font-size:23px;font-weight:900;color:#9bffc6}#district{font-size:10px;letter-spacing:.12em;color:#d1e0e7;margin-top:3px}#mission{position:absolute;top:102px;left:16px;padding:12px 14px;width:min(290px,calc(100vw - 32px))}#mission b{font-size:10px;color:var(--cyan);letter-spacing:.15em}#missionText{font-size:12px;line-height:1.5;margin-top:6px}#controls{display:none}#mission{display:none!important}kbd{padding:1px 5px;border-radius:4px;background:#243642;border:1px solid #ffffff33;font:inherit;color:white}#mapbox{position:absolute;right:16px;bottom:16px;padding:6px}#map{display:block;width:142px;height:142px;border-radius:8px}#prompt,#toast{position:absolute;left:50%;transform:translateX(-50%);padding:10px 15px;font-size:12px;text-align:center;white-space:nowrap;max-width:90vw}#prompt{bottom:22%;display:none}#toast{top:20px;opacity:0;transition:opacity .25s}#start{position:fixed;inset:0;z-index:5;display:flex;align-items:stretch;justify-content:stretch;padding:0;background:linear-gradient(120deg,#07121bea,#071b28b8);overflow:auto}#card{width:100%;min-height:100%;height:100%;padding:clamp(22px,5vw,64px);border:0;border-radius:0;background:#07131ef2;box-shadow:none;display:flex;flex-direction:column;justify-content:center}.eyebrow{color:var(--cyan);font-size:10px;font-weight:900;letter-spacing:.2em}h1{font-size:clamp(48px,10vw,100px);line-height:.92;letter-spacing:-.055em;margin:14px 0}h1 span{color:var(--cyan)}p{font-size:13px;line-height:1.65;color:#c4d4dd}#play{width:100%;margin-top:8px;padding:14px;border:0;border-radius:9px;background:var(--cyan);color:#07131e;font-weight:900;cursor:pointer;font-size:14px}#startPlaces{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:10px;margin:18px 0}#startPlaces button{padding:10px 8px;text-align:left;border:1px solid #536875;border-radius:9px;background:#12232e;color:#f4f8fb;font:inherit;font-size:12px;cursor:pointer}#startPlaces button.selected{border:2px solid var(--pink);background:#263541}#startPlaces small{display:block;color:#b9c8d2;font-size:10px;margin-top:3px}#card{max-height:none;overflow:auto}.note{font-size:10px;color:#8fa5b3}#mobile{display:none;position:absolute;left:12px;bottom:12px;gap:6px;pointer-events:auto}#mobile button{height:45px;width:45px;border:1px solid #ffffff55;border-radius:11px;background:#08131dd9;color:#fff;font-size:17px}@media(max-width:650px){#controls{display:none}#map{width:98px;height:98px}#mapbox{right:9px;bottom:9px}#brand{top:9px;left:9px}#stats{top:9px;right:9px}#mission{top:88px;left:9px;width:210px}#mobile{display:flex}#prompt{bottom:26%}}
 #locationMenu{position:fixed;z-index:30;left:50%;top:50%;transform:translate(-50%,-50%);width:min(390px,calc(100vw - 28px));padding:22px;border:1px solid var(--cyan);border-radius:16px;background:rgba(5,12,19,.96);box-shadow:0 18px 70px #0009;display:none;color:#f4f8fb}#locationMenu h2{margin:0 0 5px;font-size:22px}#locationMenu .hint{font-size:12px;color:#b9c8d2;margin-bottom:14px}#locationOptions{display:grid;gap:7px}#locationOptions button{padding:12px;text-align:left;border:1px solid #52636f;border-radius:9px;background:#14232d;color:#f4f8fb;font:inherit;cursor:pointer}#locationOptions button.selected{border:2px solid var(--pink);background:#263541;color:white}#locationMenu .footer{margin-top:13px;color:var(--cyan);font-size:12px}#teleportOpen{position:fixed;right:14px;bottom:14px;z-index:12;background:#10222d;color:white;border:1px solid var(--cyan);border-radius:9px;padding:10px 12px;font-weight:700;cursor:pointer}
@@ -136,85 +136,12 @@ function cube(parent,w,h,d,material,x,y,z,shadow=true){const o=new THREE.Mesh(ne
 const groundMat=mat(0x78856b,.98),streetMat=mat(0x34383a,.96),stone=mat(0xb9aa91,.9),stoneLight=mat(0xd0c2a8,.88),roofMat=mat(0x34383c,.9),windowMat=mat(0x263e49,.22,.18),trim=mat(0xddd2bd,.75),grassMat=mat(0x647a55,.98);
 const ground=new THREE.Mesh(new THREE.PlaneGeometry(520,520),groundMat);ground.rotation.x=-Math.PI/2;ground.position.y=-.2;ground.receiveShadow=true;scene.add(ground);
 const colliders=[];
-// Preston city-centre blockout: the Flag Market/Harris sits at the centre,
-// Fishergate runs west towards the railway station, with older streets branching around it.
-// This is a playable first-pass layout, not a survey-grade reconstruction.
-function road(x,z,w,d){cube(scene,w,.12,d,streetMat,x,.005,z,false)}
-function pavement(x,z,w,d){cube(scene,w,.2,d,stoneLight,x,.04,z,false)}
-function shopBlock(x,z,w,d,h=11,variant=0){
- const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
- const walls=[0xb9b1a2,0xc7bba6,0xa9aaa4,0xb9a99a,0xc4c0b5];
- const wall=mat(walls[variant%walls.length],.94),frame=mat(0x343b3d,.72),glass=mat(0x344d58,.24,.12),sign=mat(0xe6dfcf,.82),awning=mat([0x657b83,0x8b5948,0x68745e,0x77706a][variant%4],.86);
- cube(g,w,h,d,wall,0,h/2,0);
- cube(g,w+.45,.38,d+.45,roofMat,0,h+.18,0);
- // Ground-floor shopfront, facing the main street (-Z): wide glazing, doorway and a blank fascia.
- const front=-d/2-.035, shopW=w*.78, doorX=w*.29;
- cube(g,shopW,3.05,.16,frame,0,1.85,front);
- cube(g,shopW-.42,2.55,.07,glass,0,1.82,front-.1);
- cube(g,.18,2.75,.2,frame,doorX,1.45,front-.17);
- cube(g,.78,2.45,.07,glass,doorX,1.45,front-.28);
- cube(g,w*.86,.72,.28,sign,0,3.78,front-.12);
- cube(g,w*.9,.13,.5,awning,0,3.32,front-.23);
- // Upper-floor windows and stone lintels.
- const count=Math.max(2,Math.floor(w/5));
- for(let i=0;i<count;i++){
-  const px=-w*.36+i*(w*.72/Math.max(1,count-1));
-  cube(g,1.65,2.15,.12,frame,px,h*.68,front);
-  cube(g,1.35,1.82,.07,glass,px,h*.68,front-.08);
-  cube(g,1.9,.12,.2,sign,px,h*.68-1.12,front-.12);
- }
- // Side pilasters and simple roofline detail.
- for(const px of [-w/2+.35,w/2-.35])cube(g,.32,h,.3,sign,px,h/2,front-.12);
- cube(g,w+.65,.28,.55,trim,0,h+.35,front-.08);
-}
-function roadLink(x1,z1,x2,z2,width=8){
- const dx=x2-x1,dz=z2-z1,len=Math.hypot(dx,dz);
- const r=cube(scene,len,.12,width,streetMat,(x1+x2)/2,.005,(z1+z2)/2,false);
- r.rotation.y=-Math.atan2(dz,dx);
-}
-const square=new THREE.Mesh(new THREE.PlaneGeometry(54,34),mat(0xbab6aa,.96));
-square.rotation.x=-Math.PI/2;square.position.set(0,.018,-27);square.receiveShadow=true;scene.add(square);
-// Flag Market paving: broad stone bands and a central open gathering space.
-for(let x=-24;x<=24;x+=6){
- const strip=new THREE.Mesh(new THREE.PlaneGeometry(.12,31),mat(0x918e85,.96));
- strip.rotation.x=-Math.PI/2;strip.position.set(x,.035,-27);scene.add(strip);
-}
-for(let z=-41;z<=-13;z+=7){
- const strip=new THREE.Mesh(new THREE.PlaneGeometry(51,.12),mat(0x918e85,.96));
- strip.rotation.x=-Math.PI/2;strip.position.set(0,.036,z);scene.add(strip);
-}
-// Preston street-network blockout, aligned to the published city-centre street map.
-// The Flag Market is the anchor. Fishergate runs west towards the railway station;
-// Friargate and Church Street form the parallel historic routes, with cross streets
-// connecting them. These are still approximate game-space dimensions, not surveyed metres.
-road(-72,-49,176,10);                 // Fishergate
-road(-57,-91,150,9);                  // Friargate
-road(-46,42,142,10);                  // Church Street
-road(57,-25,10,142);                  // Lancaster Road
-road(-113,-24,9,120);                 // west-side approach
-road(-73,-20,8,62);                   // Cheapside approach
-road(-20,-5,8,54);                    // central west/east connector
-road(25,-4,8,92);                     // eastern connector
-road(-72,-118,10,46);                 // western continuation
-road(-48,-70,8,42);road(-5,-70,8,42);road(34,-70,8,42);
-road(-48,4,8,46);road(3,4,8,46);road(77,20,8,58);
-// Diagonal street connections rather than forcing every junction into a square grid.
-roadLink(-73,-20,-67,-35,8);roadLink(-67,-35,-57,-49,8);
-roadLink(25,-4,32,-20,8);roadLink(32,-20,43,-34,8);
-// Keep kerb strips simple in this layout-only phase.
-for(const z of [-42,-56,35,49,-85,-97])pavement(-72,z,176,2.4);
-for(const x of [-118,-108,-77,-69,-24,-16,21,29,53,61])pavement(x,-25,2.4,138);
-// Connected shop terraces with varied upper floors instead of isolated grey placeholder cubes.
-shopBlock(-137,-48,20,18,13,0);shopBlock(-111,-69,18,19,15,1);shopBlock(-92,-70,18,19,12,2);
-shopBlock(-42,-70,19,18,13,3);shopBlock(-18,-70,18,18,15,1);shopBlock(9,-70,17,18,12,2);
-shopBlock(49,-70,20,17,14,0);shopBlock(81,-70,25,17,13,4);
-shopBlock(-136,2,20,24,12,2);shopBlock(-94,4,22,24,14,1);shopBlock(-43,5,18,22,12,3);
-shopBlock(48,5,20,22,15,4);shopBlock(83,5,25,22,12,0);
-shopBlock(-135,68,22,22,12,1);shopBlock(-91,68,22,22,14,3);shopBlock(-44,68,20,22,12,0);
-shopBlock(7,68,20,22,13,2);shopBlock(49,68,22,22,15,4);shopBlock(89,68,24,22,12,1);
+// Preston centre — deliberately restrained first blockout.
+// Keep the Flag Market and Harris as the only completed massing here.
+// Do not invent streets or scatter generic shop blocks before the map is verified.
 // Landmark: Thos. Yates Jewellers, 33 Market Place — historic timber-framed shop.
 {
- const yates=new THREE.Group();yates.position.set(-36,0,-27);scene.add(yates);
+ const yates=new THREE.Group();yates.position.set(-22,0,-27);yates.scale.setScalar(.58);scene.add(yates);
  const plaster=mat(0xe1d5b8,.94),darkOak=mat(0x38271e,.9),oakEdge=mat(0x513729,.9);
  const glass=mat(0x344b50,.28,.12),lead=mat(0x242b2a,.72),roof=mat(0x3d4140,.96),stoneBase=mat(0x9b9587,.96);
  // Narrow, tall historic frontage with projecting upper storeys.
