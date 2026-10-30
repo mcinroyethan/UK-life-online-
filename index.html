@@ -138,11 +138,40 @@ const ground=new THREE.Mesh(new THREE.PlaneGeometry(520,520),groundMat);ground.r
 const colliders=[];
 function road(x,z,w,d){cube(scene,w,.09,d,streetMat,x,.005,z,false)}
 function pavement(x,z,w,d){cube(scene,w,.18,d,stoneLight,x,.04,z,false)}
-// A simple, open Market Square street layout around the library. No UK overview map,
-// no other town centres, and no overlapping regional road layers.
-road(0,27,150,13);road(0,-27,150,13);road(-73,0,13,68);road(73,0,13,68);
-pavement(0,18,150,4);pavement(0,-18,150,4);pavement(-64,0,4,42);pavement(64,0,4,42);
-const square=new THREE.Mesh(new THREE.PlaneGeometry(105,42),mat(0xaaa69a,.96));square.rotation.x=-Math.PI/2;square.position.set(0,.015,0);square.receiveShadow=true;scene.add(square);
+// Preston city-centre blockout: the Flag Market/Harris sits at the centre,
+// Fishergate runs west towards the railway station, with older streets branching around it.
+// This is a playable first-pass layout, not a survey-grade reconstruction.
+function road(x,z,w,d){cube(scene,w,.12,d,streetMat,x,.005,z,false)}
+function pavement(x,z,w,d){cube(scene,w,.2,d,stoneLight,x,.04,z,false)}
+function block(x,z,w,d,h=11){
+ const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
+ cube(g,w,h,d,mat(0x8d918d,.96),0,h/2,0);
+ cube(g,w+.35,.35,d+.35,mat(0x555b5b,.95),0,h+.15,0);
+}
+const square=new THREE.Mesh(new THREE.PlaneGeometry(54,34),mat(0xaaa69a,.96));
+square.rotation.x=-Math.PI/2;square.position.set(0,.018,-27);square.receiveShadow=true;scene.add(square);
+// Main east-west streets.
+road(-72,-49,176,10); // Fishergate: Flag Market towards the railway station
+road(-46,42,142,10); // Church Street
+road(-57,-91,150,9); // Friargate
+// North-south streets and approaches.
+road(57,-25,10,142);road(-113,-24,9,120);road(-73,-20,8,62);
+road(-20,-5,8,54);road(25,-4,8,92);road(-72,-118,10,46);
+// Side streets linking the main shopping spine.
+road(-48,-70,8,42);road(-5,-70,8,42);road(34,-70,8,42);
+road(-48,4,8,46);road(3,4,8,46);road(77,20,8,58);
+// Pavements along the principal streets.
+for(const z of [-42,-56,35,49,-85,-97])pavement(-72,z,176,2.4);
+for(const x of [-118,-108,-77,-69,-24,-16,21,29,53,61])pavement(x,-25,2.4,138);
+// Plain building masses establish the blocks without adding shopfronts yet.
+block(-137,-48,20,18,13);block(-111,-69,18,19,15);block(-92,-70,18,19,12);
+block(-42,-70,19,18,13);block(-18,-70,18,18,15);block(9,-70,17,18,12);
+block(49,-70,20,17,14);block(81,-70,25,17,13);
+block(-136,2,20,24,12);block(-94,4,22,24,14);block(-43,5,18,22,12);
+block(48,5,20,22,15);block(83,5,25,22,12);
+block(-135,68,22,22,12);block(-91,68,22,22,14);block(-44,68,20,22,12);
+block(7,68,20,22,13);block(49,68,22,22,15);block(89,68,24,22,12);
+// Detailed park paths, terrain contours and river geography come in a later pass.
 // Harris Library facade: a cleaner, proportion-led reconstruction of the supplied front view.
 const library=new THREE.Group();library.position.set(0,0,-3);scene.add(library);
 function part(w,h,d,m,x,y,z){return cube(library,w,h,d,m,x,y,z)}
